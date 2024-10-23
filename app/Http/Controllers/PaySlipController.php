@@ -261,9 +261,9 @@ class PaySlipController extends Controller
                         $tmp[] = $employee->name;
                         $tmp[] = $employee->payroll_type;
                         $tmp[] = $employee->pay_slip_id;
-                        $tmp[] = !empty($employee->basic_salary) ? \Auth::user()->priceFormat($employee->basic_salary) : '-';
-                        $tmp[] = !empty($employee->net_payble) ? \Auth::user()->priceFormat($employee->basic_salary*7) : '-';
-                        $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots-$employee->basic_salary*7) : '-';
+                        $tmp[] = !empty($get_employee->salary) ? \Auth::user()->priceFormat($get_employee->salary) : '-';
+                        $tmp[] = !empty($get_employee->salary) ? \Auth::user()->priceFormat($get_employee->salary *7) : '-';
+                        $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots-$get_employee->salary*7) : '-';
                         // $tmp[] =$get_employee;
                         // $tmp[] = $employee->basic_salary *7;
                         if ($employee->status == 1) {
@@ -282,9 +282,9 @@ class PaySlipController extends Controller
                     $tmp[] = \Auth::user()->employeeIdFormat($employee->employee_id);
                     $tmp[] = $employee->name;
                     $tmp[] = $employee->payroll_type;
-                    $tmp[] = !empty($employee->basic_salary) ? \Auth::user()->priceFormat($employee->basic_salary) : '-';
-                    $tmp[] = !empty($employee->net_payble) ? \Auth::user()->priceFormat($employee->basic_salary*7) : '-';
-                    $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots-$employee->basic_salary*7) : '-';
+                    $tmp[] = !empty($get_employee->salary) ? \Auth::user()->priceFormat($get_employee->salary) : '-';
+                        $tmp[] = !empty($get_employee->salary) ? \Auth::user()->priceFormat($get_employee->salary *7) : '-';
+                        $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots-$get_employee->salary*7) : '-';
                     // $tmp[] =$get_employee;
                     // $tmp[] = $employee->basic_salary *7;
                     if ($employee->status == 1) {

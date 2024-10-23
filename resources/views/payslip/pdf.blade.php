@@ -57,20 +57,6 @@
                             <div class="table-responsive">
                                 <table class="table  table-md">
                                     <tbody>
-                                        <tr class="font-weight-bold">
-                                            <th>{{ __('Earning') }}</th>
-                                            <th>{{ __('Title') }}</th>
-                                            <th>{{ __('Type') }}</th>
-                                            <th class="text-right">{{ __('Amount') }}</th>
-                                        </tr>
-                                        <tr>
-                                            <td>{{ __('Basic Salary') }}</td>
-                                            <td>-</td>
-                                            <td>-</td>
-                                            <td class="text-right">
-                                                {{ \Auth::user()->priceFormat($payslip->basic_salary) }}</td>
-                                        </tr>
-
                                         @foreach ($payslipDetail['earning']['allowance'] as $allowance)
                                             @php
                                                 $employess = \App\Models\Employee::find($allowance->employee_id);

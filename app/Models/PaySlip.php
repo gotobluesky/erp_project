@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 
 class PaySlip extends Model
 {
+    protected $table = 'pay_slips';
     protected $fillable = [
         'employee_id',
         'net_payble',

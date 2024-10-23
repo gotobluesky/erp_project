@@ -12,6 +12,7 @@ use App\Models\Loan;
 use App\Models\LoanOption;
 use App\Models\OtherPayment;
 use App\Models\Overtime;
+use App\Models\PaySlip;
 use App\Models\PayslipType;
 use App\Models\SaturationDeduction;
 use Illuminate\Http\Request;
@@ -204,9 +205,15 @@ class SetSalaryController extends Controller
             return redirect()->back()->with('error', $messages->first());
         }
         $employee = Employee::findOrFail($id);
-        $input    = $request->all();
-        $employee->fill($input)->save();
-
+        // var_dump($input);
+        $employee->salary_type = $request -> salary_type;
+        $employee->salary = $request -> salary;
+        $employee->saltots = $request -> saltots;
+        $employee->account_type = $request -> account_type;
+        $employee -> save();
+        
+        // $payslip=PaySlip::where("employeer_id", "=", $id);
+        // var_dump($payslip); die();
         return redirect()->back()->with('success', 'Employee Salary Updated.');
     }
 
