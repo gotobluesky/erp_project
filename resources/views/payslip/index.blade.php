@@ -255,14 +255,16 @@
                         console.clear();
                         var tr = '';
                         if (data.length > 0) {
+                            console.log(data);
+                            
                             $.each(data, function(indexInArray, valueOfElement) {
                                 var status =
                                     '<div class="badge bg-danger p-2 px-3 rounded"><a href="#" class="text-white">' +
-                                    valueOfElement[6] + '</a></div>';
-                                if (valueOfElement[6] == 'Paid') {
+                                    valueOfElement[9] + '</a></div>';
+                                if (valueOfElement[9] == 'Paid') {
                                     var status =
                                         '<div class="badge bg-success p-2 px-3 rounded"><a href="#" class="text-white">' +
-                                        valueOfElement[6] + '</a></div>';
+                                        valueOfElement[9] + '</a></div>';
                                 }
 
                                 var id = valueOfElement[0];

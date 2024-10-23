@@ -138,10 +138,15 @@ class SetSalaryController extends Controller
             $allowances           = Allowance::where('employee_id', $id)->get();
             $commissions          = Commission::where('employee_id', $id)->get();
             $loans                = Loan::where('employee_id', $id)->get();
-            $saturationdeductions = SaturationDeduction::where('employee_id', $id)->get();
+            //aturationdeductions = SaturationDeduction::where('employee_id', $id)->get();
             $otherpayments        = OtherPayment::where('employee_id', $id)->get();
             $overtimes            = Overtime::where('employee_id', $id)->get();
             $employee             = Employee::find($id);
+            $saturationdeductions = SaturationDeduction::where('employee_id', $id)->orwhere(function($query){
+                $query->where('title', 'IMSS')->orwhere('title', 'ISR')->orwhere('title','Subsidio');
+            })->get();
+            // var_dump($saturationdeductions)
+          
 
             foreach ($allowances as  $value) {
                 if ($value->type == 'percentage') {

@@ -214,19 +214,19 @@
                                         <div class="invoice-detail-name font-weight-bold">{{ __('Total Earning') }}
                                         </div>
                                         <div class="invoice-detail-value">
-                                            {{ \Auth::user()->priceFormat($payslipDetail['totalEarning']) }}</div>
+                                            {{ \Auth::user()->priceFormat($employee['saltots']) }}</div>
                                     </div>
                                     <div class="invoice-detail-item">
                                         <div class="invoice-detail-name font-weight-bold">{{ __('Total Deduction') }}
                                         </div>
                                         <div class="invoice-detail-value">
-                                            {{ \Auth::user()->priceFormat($payslipDetail['totalDeduction']) }}</div>
+                                            {{ \Auth::user()->priceFormat($result['totalDeduction']) }}</div>
                                     </div>
                                     <hr class="mt-2 mb-2">
                                     <div class="invoice-detail-item">
                                         <div class="invoice-detail-name font-weight-bold">{{ __('Net Salary') }}</div>
                                         <div class="invoice-detail-value invoice-detail-value-lg">
-                                            {{ \Auth::user()->priceFormat($payslip->net_payble) }}</div>
+                                            {{ \Auth::user()->priceFormat($result['totalsalary']) }}</div>
                                     </div>
                                 </div>
                             </div>

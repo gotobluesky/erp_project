@@ -49,6 +49,10 @@
                                 <b class="m-0"> {{ __('Account Type') }} </b>
                                 <div class="project-amnt pt-1">{{ !empty($employee->account_type()) ? $employee->account_type() : '-' }}</div>
                             </div>
+                            <div class="project-info-inner mt-3 col-1">
+                                <b class="m-0"> {{ __('Salario Total') }} </b>
+                                <div class="project-amnt pt-1">{{ $employee->saltots }}</div>
+                            </div>
                         </div>
                     </div>
                 </div>

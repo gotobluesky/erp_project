@@ -272,6 +272,7 @@ class PaySlipController extends Controller
                             $tmp[] = 'unpaid';
                         }
                         $tmp[]  = !empty($employee->pay_slip_id) ? $employee->pay_slip_id : 0;
+                        $tmp[]  = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots) : '-';
                         $tmp['url']  = route('employee.show', Crypt::encrypt($employee->id));
                         $data[] = $tmp;
                     }
@@ -283,8 +284,8 @@ class PaySlipController extends Controller
                     $tmp[] = $employee->name;
                     $tmp[] = $employee->payroll_type;
                     $tmp[] = !empty($get_employee->salary) ? \Auth::user()->priceFormat($get_employee->salary) : '-';
-                        $tmp[] = !empty($get_employee->salary) ? \Auth::user()->priceFormat($get_employee->salary *7) : '-';
-                        $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots-$get_employee->salary*7) : '-';
+                    $tmp[] = !empty($get_employee->salary) ? \Auth::user()->priceFormat($get_employee->salary *7) : '-';
+                    $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots-$get_employee->salary*7) : '-';
                     // $tmp[] =$get_employee;
                     // $tmp[] = $employee->basic_salary *7;
                     if ($employee->status == 1) {
@@ -293,6 +294,7 @@ class PaySlipController extends Controller
                         $tmp[] = 'UnPaid';
                     }
                     $tmp[]  = !empty($employee->pay_slip_id) ? $employee->pay_slip_id : 0;
+                    $tmp[]  = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots) : '-';
                     $tmp['url']  = route('employee.show', Crypt::encrypt($employee->id));
                     $data[] = $tmp;
                 }
@@ -374,8 +376,16 @@ class PaySlipController extends Controller
         $employee = Employee::find($payslip->employee_id);
 
         $payslipDetail = Utility::employeePayslipDetail($id, $month);
+        $saturationdeductions = SaturationDeduction::where(function($query){
+            $query->where('title', 'IMSS')->orwhere('title', 'ISR')->orwhere('title','Subsidio');
+        })->get()->toArray();
+        
+        // $result=[];
 
-        return view('payslip.pdf', compact('payslip', 'employee', 'payslipDetail'));
+        $result["totalDeduction"]=$saturationdeductions[0]["amount"]+$saturationdeductions[1]["amount"]-$saturationdeductions[2]["amount"];
+        
+        $result["totalsalary"]=$employee->saltots-$result["totalDeduction"];
+        return view('payslip.pdf', compact('payslip', 'employee', 'payslipDetail', 'result'));
     }
 
     public function send($id, $month)
