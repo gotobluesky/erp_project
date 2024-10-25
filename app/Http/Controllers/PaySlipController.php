@@ -81,8 +81,8 @@ class PaySlipController extends Controller
         $validator = \Validator::make(
             $request->all(),
             [
-                'month' => 'required',
-                'year' => 'required',
+                'start' => 'required',
+                'end' => 'required',
 
             ]
         );
@@ -93,8 +93,8 @@ class PaySlipController extends Controller
             return redirect()->back()->with('error', $messages->first());
         }
 
-        $month = $request->month;
-        $year  = $request->year;
+        $start = $request->start;
+        $end  = $request->end;
 
         
         $formate_month_year = $year . '-' . $month;
@@ -222,9 +222,12 @@ class PaySlipController extends Controller
     public function search_json(Request $request)
     {
 
-        $formate_month_year = $request->datePicker;
-        $validatePaysilp    = PaySlip::where('salary_month', '=', $formate_month_year)->where('created_by', \Auth::user()->creatorId())->get()->toarray();
-
+        // $formate_month_year = $request->datePicker;
+        $start = $request->start;
+        $end = $request->end;
+        
+        // $validatePaysilp    = PaySlip::where('salary_month', '=', $formate_month_year)->where('created_by', \Auth::user()->creatorId())->get()->toarray();
+        $validatePaysilp    = PaySlip::where('created_by', \Auth::user()->creatorId())->whereBetween('created_at', [$start,  $end])->get()->toarray();
         $data = [];
         if (empty($validatePaysilp)) {
             $data = [];
@@ -240,16 +243,17 @@ class PaySlipController extends Controller
                     'pay_slips.net_payble',
                     'pay_slips.id as pay_slip_id',
                     'pay_slips.status',
+                    'pay_slips.created_at',
                     'employees.user_id',
                 ]
             )->leftjoin(
                 'employees',
-                function ($join) use ($formate_month_year) {
+                function ($join) {
                     $join->on('employees.id', '=', 'pay_slips.employee_id');
-                    $join->on('pay_slips.salary_month', '=', \DB::raw("'" . $formate_month_year . "'"));
+                    // $join->on('pay_slips.created_at', '=', \DB::whereBetween("'" . $formate_month_year . "'"));
                     $join->leftjoin('payslip_types', 'payslip_types.id', '=', 'employees.salary_type');
                 }
-            )->where('employees.created_by', \Auth::user()->creatorId())->get();
+            )->where('employees.created_by', \Auth::user()->creatorId())->whereBetween('pay_slips.created_at', [$start, $end])->get();
 
 
             foreach ($paylip_employee as $employee) {
@@ -299,6 +303,7 @@ class PaySlipController extends Controller
                     $data[] = $tmp;
                 }
             }
+            // var_dump($data); die();
             return $data;
         }
     }

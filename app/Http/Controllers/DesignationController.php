@@ -15,9 +15,13 @@ class DesignationController extends Controller
     {
 
         if (\Auth::user()->can('Manage Designation')) {
-            $designations = Designation::where('created_by', '=', \Auth::user()->creatorId())->get();
+            $designations = Designation::where('created_by', '=', \Auth::user()->creatorId())->get()->toArrays();
 
-            return view('designation.index', compact('designations'));
+            $department = Department::where('id', '=', $designations->department_id)->get()->toArrays();
+            var_dump($designations);
+            var_dump($department);
+            die();
+            return view('designation.index', compact('designations', $department));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }

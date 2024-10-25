@@ -13,7 +13,7 @@ class Isr2024Weekly extends Model
         'limif',
         'limsu',
         'cuota',
-        'porcen'
+        'porcen',
     ];
 
 }

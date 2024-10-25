@@ -16,22 +16,16 @@
                 <div class="card-body">
                     {{ Form::open(['route' => ['payslip.store'], 'method' => 'POST', 'id' => 'payslip_form']) }}
                     <div class="d-flex align-items-center justify-content-end">
-                    <div class="col-xl-2 col-lg-3 col-md-6 col-sm-12 col-12 mx-2">
-                    <div class="btn-box">
-                        <Label class="form-label">Select date</Label>
-                        <input type="date"  name="searchdate" class="form-control" id="datePicker1" >
-                    </div>
-                    </div>
                         <div class="col-xl-2 col-lg-3 col-md-6 col-sm-12 col-12 mx-2">
                             <div class="btn-box">
-                                {{ Form::label('month', __('Select Month'), ['class' => 'form-label']) }}
-                                {{ Form::select('month', $month, date('m'), ['class' => 'form-control select', 'id' => 'month']) }}
+                                <Label class="form-label">Fecha de inicio</Label>
+                                    <input type="date"  name="start" class="form-control" id="datePicker11" >
                             </div>
                         </div>
                         <div class="col-xl-2 col-lg-3 col-md-6 col-sm-12 col-12 mx-2">
                             <div class="btn-box">
-                                {{ Form::label('year', __('Select Year'), ['class' => 'form-label']) }}
-                                {{ Form::select('year', $year, date('Y'), ['class' => 'form-control select']) }}
+                                <Label class="form-label">Fecha final</Label>
+                                    <input type="date"  name="end" class="form-control" id="datePicker12" >
                             </div>
                         </div>
                         <div class="col-auto float-end ms-2 mt-4">
@@ -60,31 +54,17 @@
                     </div>
                     <div class="col-md-8">
                         <div class="d-flex align-items-center justify-content-end ">
-                        <div class="col-xl-2 col-lg-3 col-md-6 col-sm-12 col-12 mx-2">
-                    <div class="btn-box">
-                    <input type="date"  name="searchdate" class="form-control"id="datePicker2" placeholder="<?php echo (new DateTime())->format('j F Y'); ?>">
-                    </div>
-                    </div>
+                            <!-- <div class="col-xl-2 col-lg-3 col-md-6 col-sm-12 col-12 mx-2">
+                                <div class="btn-box">
+                                    <input type="date"  name="searchdate" class="form-control"id="datePicker21" >
+                                </div>
+                            </div>
                             <div class="col-xl-2 col-lg-3 col-md-6 col-sm-12 col-12 mx-2">
                                 <div class="btn-box">
-                                    <select class="form-control month_date " name="year" tabindex="-1"
-                                        aria-hidden="true">
-                                        <option value="--">--</option>
-                                        @foreach ($month as $k => $mon)
-                                            @php
-                                                $selected = date('m') == $k ? 'selected' : '';
-                                            @endphp
-                                            <option value="{{ $k }}" {{ $selected }}>{{ $mon }}
-                                            </option>
-                                        @endforeach
-                                    </select>
+                                    <input type="date"  name="searchdate" class="form-control"id="datePicker22" >
                                 </div>
-                            </div>
-                            <div class="col-xl-2 col-lg-3 col-md-6 col-sm-12 col-12 me-2">
-                                <div class="btn-box">
-                                    {{ Form::select('year', $year, date('Y'), ['class' => 'form-control year_date ']) }}
-                                </div>
-                            </div>
+                            </div> -->
+                           
                             @if (Auth::user()->type == 'company' || Auth::user()->type == 'hr')
                                 {{ Form::open(['route' => ['payslip.export'], 'method' => 'POST', 'id' => 'payslip_form']) }}
                                 <input type="hidden" name="filter_month" class="filter_month">
@@ -147,34 +127,27 @@
 
         // today = yyyy + '/' + mm + '/' + dd;
         today = `${yyyy}-${mm}-${dd}`;
-        document.getElementById('datePicker1').value = today;
-        document.getElementById('datePicker2').value = today;
+        beforeAWeek = `${yyyy}-${mm}-${dd-7}`;
+        document.getElementById('datePicker11').value = beforeAWeek;
+        // document.getElementById('datePicker21').value = beforeAWeek;
+        document.getElementById('datePicker12').value = today;
+        // document.getElementById('datePicker22').value = today;
         $(document).ready(function() {
            
             callback();
 
             function callback() {
-                var month = $(".month_date").val();
-                var year = $(".year_date").val();
+                var start = $("#datePicker11").val();
+                var end = $("#datePicker12").val();
 
-                $('.filter_month').val(month);
-                $('.filter_year').val(year);
-
-                if (month == '') {
-                    month = '{{ date('m', strtotime('last month')) }}';
-                    year = '{{ date('Y') }}';
-
-                    $('.filter_month').val(month);
-                    $('.filter_year').val(year);
-                }
-
-                var datePicker = year + '-' + month;
 
                 $.ajax({
                     url: '{{ route('payslip.search_json') }}',
                     type: 'POST',
                     data: {
-                        "datePicker": datePicker,
+                        // "datePicker": datePicker,
+                        "start":start,
+                        "end":end,
                         "_token": "{{ csrf_token() }}",
                     },
                     success: function(data) {
@@ -211,14 +184,14 @@
                             if (data != 0) {
                                 var payslip =
                                     '<a href="#" data-url="{{ url('payslip/pdf/') }}/' + id +
-                                    '/' + datePicker +
+                                    '/' + "datePicker" +
                                     '" data-size="md-pdf"  data-ajax-popup="true" class="btn btn-primary" data-title="{{ __('Employee Payslip') }}">' +
                                     '{{ __('Payslip') }}' + '</a> ';
                             }
 
                             if (status == "UnPaid" && data != 0) {
                                 clickToPaid = '<a href="{{ url('payslip/paysalary/') }}/' + id +
-                                    '/' + datePicker + '"  class="view-btn primary-bg btn-sm">' +
+                                    '/' + "datePicker" + '"  class="view-btn primary-bg btn-sm">' +
                                     '{{ __('Click To Paid') }}' + '</a>  ';
                             }
 
@@ -275,14 +248,14 @@
                                     var payslip =
                                         '<a href="#" data-url="{{ url('payslip/pdf/') }}/' +
                                         id +
-                                        '/' + datePicker +
+                                        '/' + "datePicker" +
                                         '" data-size="lg"  data-ajax-popup="true" class=" btn-sm btn btn-warning" data-title="{{ __('Employee Payslip') }}">' +
                                         '{{ __('Payslip') }}' + '</a> ';
                                 }
                                 if (valueOfElement[6] == "UnPaid" && valueOfElement[7] != 0) {
                                     var clickToPaid =
                                         '<a href="{{ url('payslip/paysalary/') }}/' + id +
-                                        '/' + datePicker +
+                                        '/' + "datePicker" +
                                         '"  class="btn-sm btn btn-primary">' +
                                         '{{ __('Click To Paid') }}' + '</a>  ';
                                 } else {

@@ -30,5 +30,6 @@ class AttendanceEmployee extends Model
     }
     public function calculateworkingtime($employee_id, $start, $end){
         $attendanceemployee = AttendanceEmployee::where('employee_id', $employee_id)->whereBetween('date', [$start, $end])->get();
+        return $attendanceemployee;
     }
 }

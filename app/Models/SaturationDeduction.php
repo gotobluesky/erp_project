@@ -27,4 +27,12 @@ class SaturationDeduction extends Model
         'fixed'=>'Fixed',
         'percentage'=> 'Percentage',
     ];
+    public function updatedata($data){
+        $imss['amount']=$data['imss'];
+        $isr['amount']=$data['isr'];
+        $subsidio['amount']=$data['subsidio'];
+        $this->where("title", "IMSS")->update($imss);
+        $this->where("title", "ISR")->update($isr);
+        $this->where("title", "Subsidio")->update($subsidio);
+    }
 }
