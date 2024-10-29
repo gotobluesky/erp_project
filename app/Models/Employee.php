@@ -52,7 +52,7 @@ class Employee extends Model
         return $this->hasOne('App\Models\AccountList', 'id', 'account_type')->pluck('account_name')->first();
     }
  
-    public function get_net_salary()
+    public function get_net_salary( $employee, $start, $end)
     {
         //allowance
 
@@ -131,10 +131,14 @@ class Employee extends Model
         // //Net Salary Calculate
         // $advance_salary = $total_allowance + $total_commission - $total_loan - $total_saturation_deduction + $total_other_payment + $total_over_time;
 
-        $employee       = Employee::where('id', '=', $this->id)->first();
+        // $employee       = Employee::where('id', '=', $id)->first();
 
         // $net_salary     = (!empty($employee->salary) ? $employee->salary : 0) + $advance_salary;
-        $net_salary = $employee->salary * 7;
+        $labor=new AttendanceEmployee();
+        $result=$labor->calculateworkingtime( $employee->id, $start, $end);
+        $net_salary = $employee->salary *  $result["labor"];
+        
+
         return $net_salary;
     }
 

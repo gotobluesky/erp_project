@@ -154,7 +154,9 @@
                         var datatable_data = {
                             data: data
                         };
-
+                        document.getElementById('datePicker11').value = data[0][7];
+                        // document.getElementById('datePicker21').value = beforeAWeek;
+                        document.getElementById('datePicker12').value = data[0][8];
                         function renderstatus(data, cell, row) {
                             if (data == 'Paid')
                                 return '<div class="badge bg-success p-2 px-3 rounded"><a href="#" class="text-white">' +
@@ -248,7 +250,7 @@
                                     var payslip =
                                         '<a href="#" data-url="{{ url('payslip/pdf/') }}/' +
                                         id +
-                                        '/' + "datePicker" +
+                                        '/' + valueOfElement[10] +
                                         '" data-size="lg"  data-ajax-popup="true" class=" btn-sm btn btn-warning" data-title="{{ __('Employee Payslip') }}">' +
                                         '{{ __('Payslip') }}' + '</a> ';
                                 }

@@ -256,10 +256,10 @@ class Utility extends Model
         'contract' => 'Contract',
     ];
 
-    public static function employeePayslipDetail($employeeId, $month)
+    public static function employeePayslipDetail($employeeId, $payslip_id)
     {
         // allowance
-        $earning['allowance'] = PaySlip::where('employee_id', $employeeId)->where('salary_month', $month)->get();
+        $earning['allowance'] = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
 
         $employess = Employee::find($employeeId);
 
@@ -279,7 +279,7 @@ class Utility extends Model
         }
 
         // commission
-        $earning['commission'] = PaySlip::where('employee_id', $employeeId)->where('salary_month', $month)->get();
+        $earning['commission'] = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
 
         $employess = Employee::find($employeeId);
 
@@ -302,7 +302,7 @@ class Utility extends Model
         }
 
         // otherpayment
-        $earning['otherPayment']      = PaySlip::where('employee_id', $employeeId)->where('salary_month', $month)->get();
+        $earning['otherPayment']      = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
 
         $employess = Employee::find($employeeId);
 
@@ -324,7 +324,7 @@ class Utility extends Model
         }
 
         //overtime
-        $earning['overTime'] = Payslip::where('employee_id', $employeeId)->where('salary_month', $month)->get();
+        $earning['overTime'] = Payslip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
 
         $ot = 0;
 
@@ -338,7 +338,7 @@ class Utility extends Model
         }
 
         // loan
-        $deduction['loan'] = PaySlip::where('employee_id', $employeeId)->where('salary_month', $month)->get();
+        $deduction['loan'] = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
 
         $employess = Employee::find($employeeId);
 
@@ -361,7 +361,7 @@ class Utility extends Model
         }
 
         // saturation_deduction
-        $deduction['deduction']      = PaySlip::where('employee_id', $employeeId)->where('salary_month', $month)->get();
+        $deduction['deduction']      = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
 
         $employess = Employee::find($employeeId);
 

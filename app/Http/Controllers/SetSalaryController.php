@@ -31,7 +31,15 @@ class SetSalaryController extends Controller
                     'created_by' => \Auth::user()->creatorId(),
                 ]
             )->get();
+            $labor=new AttendanceEmployee();
+            $startend=$this->getweek();
+            foreach($employees as $employee){
+                $result=$labor->calculateworkingtime( $employee->id, $startend["start"], $startend["end"]);
 
+                $employee->net_salary=$employee->salary * $result["labor"];
+
+            }
+            
             return view('setsalary.index', compact('employees'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
@@ -72,7 +80,16 @@ class SetSalaryController extends Controller
             return redirect()->back()->with('error', __('Permission denied.'));
         }
     }
-
+    public function getweek(){
+        $currentDate = new DateTime();
+        $sevenDaysAgo = clone $currentDate; // Clone to avoid modifying the original object
+        $sevenDaysAgo->modify('-6 days'); // Subtract 7 days
+        $start=$sevenDaysAgo->format('Y-m-d'); 
+        $end=$currentDate->format('Y-m-d');
+        $result['start']= $start;
+        $result['end']=$end;
+        return $result;
+    }
     public function show($id)
     {
 
@@ -106,7 +123,10 @@ class SetSalaryController extends Controller
             $otherpayments        = OtherPayment::where('employee_id', $currentEmployee->id)->get();
             $overtimes            = Overtime::where('employee_id', $currentEmployee->id)->get();
             $employee             = Employee::where('user_id', '=', \Auth::user()->id)->first();
-            $basedataforsalary = $this->calculatEvaluate($employee, $start, $end);
+
+            $startend=$this->getweek();
+            $basedataforsalary = $this->calculatEvaluate($employee, $startend["start"], $startend["end"]);
+
             $saturationdeductions = SaturationDeduction::where('employee_id', $id)->orwhere(function($query){
                 $query->where('title', 'IMSS')->orwhere('title', 'ISR')->orwhere('title','Subsidio');
             })->get();
@@ -161,12 +181,8 @@ class SetSalaryController extends Controller
             $overtimes            = Overtime::where('employee_id', $id)->get();
             $employee             = Employee::find($id);
             
-            $currentDate = new DateTime();
-            $sevenDaysAgo = clone $currentDate; // Clone to avoid modifying the original object
-            $sevenDaysAgo->modify('-7 days'); // Subtract 7 days
-            $start=$sevenDaysAgo->format('Y-m-d'); 
-            $end=$currentDate->format('Y-m-d');
-            $basedataforsalary = $this->calculatEvaluate($employee, $start, $end);
+            $startend=$this->getweek();
+            $basedataforsalary = $this->calculatEvaluate($employee, $startend["start"], $startend["end"]);
 
             // $saturationdeductions = SaturationDeduction::where('employee_id', $id)->get();
             $saturationdeductions = SaturationDeduction::where('employee_id', $id)->orwhere(function($query){
@@ -235,34 +251,37 @@ class SetSalaryController extends Controller
        
         // Format and display the date from 7 days ago
 
-        $attendanceemployee = AttendanceEmployee::where('employee_id', $employee->id)->whereBetween('date', [$start, $end])->get();
-        $Asistidos = 0;
-        foreach ( $attendanceemployee as $value){
-            if ($value->clock_in!=null){
-                $Asistidos ++;
-            }
-        }
-        $Extra = $Asistidos*(1/6);
-        $laboradorados = $Asistidos + $Extra;
+        // $attendanceemployee = AttendanceEmployee::where('employee_id', $employee->id)->whereBetween('date', [$start, $end])->get();
+        // $Asistidos = 0;
+        // foreach ( $attendanceemployee as $value){
+        //     if ($value->clock_in!=null){
+        //         $Asistidos ++;
+        //     }
+        // }
+        // $Extra = $Asistidos*(1/6);
+        // $labor = $Asistidos + $Extra;
 
-        $importe = $diferencia * $Asistidos;
+        $labor=new AttendanceEmployee();
+        $result=$labor->calculateworkingtime( $employee->id, $start, $end);
+        
+        $importe = $diferencia * $result["Asistidos"];
         $excedentepatro = 0.4;
         $cuotacorre = $importe * $excedentepatro;
         $excedentpatron = 0.40 * $excedentepatro;
 
-        $prestaciodiner = 0.25 * ($SDI * $laboradorados);
-        $prestacioespec = 0.375 * ($SDI * $laboradorados);
-        $invalidday = 0.625 * ($SDI * $laboradorados);
-        $guarderyprestasoc = 1.125 * ($SDI * $laboradorados);
+        $prestaciodiner = 0.25 * ($SDI * $result["labor"]);
+        $prestacioespec = 0.375 * ($SDI *$result["labor"]);
+        $invalidday = 0.625 * ($SDI * $result["labor"]);
+        $guarderyprestasoc = 1.125 * ($SDI * $result["labor"]);
 
         $totalimss = ($excedentpatron +  $prestaciodiner +  $prestacioespec +  $invalidday + $guarderyprestasoc);
 
-        $baseValueIsr = Isr2024Weekly::where('limif', '<', 2000)
-                                    ->where('limsu', '>', 2000)
+        $baseValueIsr = Isr2024Weekly::where('limif', '<', $employee->salary* $result["labor"])
+                                    ->where('limsu', '>', $employee->salary* $result["labor"])
                                     ->get();
         $Isr = floatval($baseValueIsr[0]->cuota) + ((floatval($employee->saltots)-floatval($baseValueIsr[0]->limif))*floatval($baseValueIsr[0]->porcen));
         
-        if ($employee->saltots<2271){
+        if (floatval($employee->salary)*$result["labor"]<2271){
             $subsidio =89.00;
         }else{
             $subsidio =0;
@@ -310,6 +329,7 @@ class SetSalaryController extends Controller
     public function employeeSalary()
     {
         if (\Auth::user()->type == "employee") {
+
             $employees = Employee::where('user_id', \Auth::user()->id)->get();
 
             return view('setsalary.index', compact('employees'));
