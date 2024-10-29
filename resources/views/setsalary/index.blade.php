@@ -39,7 +39,7 @@
                                     <td>{{ $employee->name }}</td>
                                     <td>{{ $employee->salary_type() }}</td>
                                     <td>{{ \Auth::user()->priceFormat($employee->salary) }}</td>
-                                    <td>{{ !empty($employee->net_salary) ? \Auth::user()->priceFormat($employee->net_salary) : '' }}
+                                    <td>{{ !empty($employee->salary) ? \Auth::user()->priceFormat($employee->salary*7) : '' }}
                                     </td>
                                     <td class="Action">
                                         <span>

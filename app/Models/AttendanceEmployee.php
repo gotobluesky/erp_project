@@ -30,17 +30,19 @@ class AttendanceEmployee extends Model
     }
     public function calculateworkingtime($employee_id, $start, $end){
         // return 1;
+       
         $attendanceEmployees = AttendanceEmployee::where('employee_id', $employee_id)->whereBetween('date', [$start, $end])->get();
         // $attendanceEmployees = AttendanceEmployee::where('employee_id', 136)
         // ->whereBetween('date', ['2024-10-19', '2024-10-25'])
         // ->get();
-        
+      
         $Asistidos = 0;
         foreach ( $attendanceEmployees as $value){
             if ($value->clock_in!=null){
                 $Asistidos ++;
             }
         }
+         
         $Extra = $Asistidos*(1/6);
         $laboradorados = $Asistidos + $Extra;
         $result["labor"]=$laboradorados;

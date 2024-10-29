@@ -195,7 +195,59 @@ class Employee extends Model
 
         return $saturation_deduction_json;
     }
+   
+     public static function basic_deduction($employee, $start, $end){
+           
+        $Vacationday = 12;
+        $Vacationbonus = 0.25;
+        $Aguinaldo = 12;
+        $Daypyear = 365;
+        $Totaldays = $Aguinaldo + $Daypyear; 
+        $FDI =$Totaldays/ $Daypyear; //1.0328767
 
+        $SDI = floatval($employee-> salary) * $FDI;
+        $UMA3 = 325.71;
+        $diferencia=0;
+        if($UMA3 > $SDI){
+            $diferencia = $SDI - $UMA3;
+        }
+
+        
+        $labor= new AttendanceEmployee();
+        $result= $labor->calculateworkingtime( $employee->id, $start, $end);
+        
+        $importe = $diferencia * $result["Asistidos"];
+        $excedentepatro = 0.4;
+        $cuotacorre = $importe * $excedentepatro;
+        $excedentpatron = 0.40 * $excedentepatro;
+
+        $prestaciodiner = 0.25 * ($SDI * $result["labor"]);
+        $prestacioespec = 0.375 * ($SDI *$result["labor"]);
+        $invalidday = 0.625 * ($SDI * $result["labor"]);
+        $guarderyprestasoc = 1.125 * ($SDI * $result["labor"]);
+
+        $totalimss = ($excedentpatron +  $prestaciodiner +  $prestacioespec +  $invalidday + $guarderyprestasoc);
+       
+ 
+        $baseValueIsr = Isr2024Weekly::where('limif', '<=', $employee->salary* $result["labor"])
+                                    ->where('limsu', '>=', $employee->salary* $result["labor"])
+                                    ->get();
+                                  
+        $Isr = floatval($baseValueIsr[0]->cuota) + ((floatval($employee->saltots)-floatval($baseValueIsr[0]->limif))*floatval($baseValueIsr[0]->porcen));
+        
+        if (floatval($employee->salary)*$result["labor"]<2271){
+            $subsidio =89.00;
+        }else{
+            $subsidio =0;
+        }
+      
+        $baseVals["imss"] =$totalimss;
+        $baseVals["isr"] =$Isr;
+        $baseVals["subsidio"] =$subsidio;
+      
+        $result = json_encode($baseVals);
+        return $result;
+    }
     public static function other_payment($id)
     {
         //OtherPayment

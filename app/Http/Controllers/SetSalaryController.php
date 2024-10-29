@@ -31,6 +31,7 @@ class SetSalaryController extends Controller
                     'created_by' => \Auth::user()->creatorId(),
                 ]
             )->get();
+            // var_dump($employees); die();
             $labor=new AttendanceEmployee();
             $startend=$this->getweek();
             foreach($employees as $employee){
@@ -39,7 +40,6 @@ class SetSalaryController extends Controller
                 $employee->net_salary=$employee->salary * $result["labor"];
 
             }
-            
             return view('setsalary.index', compact('employees'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
@@ -86,8 +86,10 @@ class SetSalaryController extends Controller
         $sevenDaysAgo->modify('-6 days'); // Subtract 7 days
         $start=$sevenDaysAgo->format('Y-m-d'); 
         $end=$currentDate->format('Y-m-d');
+        
         $result['start']= $start;
         $result['end']=$end;
+       
         return $result;
     }
     public function show($id)
@@ -108,14 +110,15 @@ class SetSalaryController extends Controller
         //     $this->formatTimeToString($attendance->late) + $this->formatTimeToString($attendance->late); 
         // }
 
-        $currentDate = new DateTime();
-        // Clone the DateTime object to get the date 7 days ago
-        $sevenDaysAgo = clone $currentDate; // Clone to avoid modifying the original object
-        $sevenDaysAgo->modify('-7 days'); // Subtract 7 days
-        $start=$sevenDaysAgo->format('Y-m-d'); 
-        $end=$currentDate->format('Y-m-d');
-
+        // $currentDate = new DateTime();
+        // // Clone the DateTime object to get the date 7 days ago
+        // $sevenDaysAgo = clone $currentDate; // Clone to avoid modifying the original object
+        // $sevenDaysAgo->modify('-7 days'); // Subtract 7 days
+        // $start=$sevenDaysAgo->format('Y-m-d'); 
+        // $end=$currentDate->format('Y-m-d');
+        
         if (\Auth::user()->type == 'employee') {
+              var_dump($deduction_options); die();
             $currentEmployee      = Employee::where('user_id', '=', \Auth::user()->id)->first();
             $allowances           = Allowance::where('employee_id', $currentEmployee->id)->get();
             $commissions          = Commission::where('employee_id', $currentEmployee->id)->get();
@@ -123,15 +126,15 @@ class SetSalaryController extends Controller
             $otherpayments        = OtherPayment::where('employee_id', $currentEmployee->id)->get();
             $overtimes            = Overtime::where('employee_id', $currentEmployee->id)->get();
             $employee             = Employee::where('user_id', '=', \Auth::user()->id)->first();
-
+          
             $startend=$this->getweek();
+           
             $basedataforsalary = $this->calculatEvaluate($employee, $startend["start"], $startend["end"]);
-
-            $saturationdeductions = SaturationDeduction::where('employee_id', $id)->orwhere(function($query){
-                $query->where('title', 'IMSS')->orwhere('title', 'ISR')->orwhere('title','Subsidio');
-            })->get();
-            // $this->calculatEvaluate($employee);
-            // var_dump($this->calculatEvaluate($employee)); die();
+           
+            // $saturationdeductions = SaturationDeduction::where('employee_id', $id)->orwhere(function($query){
+            //     $query->where('title', 'IMSS')->orwhere('title', 'ISR')->orwhere('title','Subsidio');
+            // })->get();
+           $saturationdeductions = SaturationDeduction::where('employee_id', $id)->get();
             foreach ($allowances as  $value) {
                 if ($value->type == 'percentage') {
                     $employee          = Employee::find($value->employee_id);
@@ -174,22 +177,22 @@ class SetSalaryController extends Controller
 
             return view('setsalary.employee_salary', compact('employee', 'payslip_type', 'allowance_options', 'commissions', 'loan_options', 'overtimes', 'otherpayments','basedataforsalary', 'saturationdeductions', 'loans', 'deduction_options', 'allowances'));
         } else {
+         
             $allowances           = Allowance::where('employee_id', $id)->get();
             $commissions          = Commission::where('employee_id', $id)->get();
             $loans                = Loan::where('employee_id', $id)->get();
             $otherpayments        = OtherPayment::where('employee_id', $id)->get();
             $overtimes            = Overtime::where('employee_id', $id)->get();
             $employee             = Employee::find($id);
-            
+           
             $startend=$this->getweek();
+             
             $basedataforsalary = $this->calculatEvaluate($employee, $startend["start"], $startend["end"]);
 
             // $saturationdeductions = SaturationDeduction::where('employee_id', $id)->get();
-            $saturationdeductions = SaturationDeduction::where('employee_id', $id)->orwhere(function($query){
-                $query->where('title', 'IMSS')->orwhere('title', 'ISR')->orwhere('title','Subsidio');
-            })->get();
-
-
+           
+ 
+            
             foreach ($allowances as  $value) {
                 if ($value->type == 'percentage') {
                     $employee          = Employee::find($value->employee_id);
@@ -213,7 +216,12 @@ class SetSalaryController extends Controller
                     $value->tota_allow = $empsal;
                 }
             }
-
+            // var_dump($basedataforsalary); die();
+            //   $saturationdeductions = SaturationDeduction::where('employee_id', $id)->orwhere(function($query){
+            //                 $query->where('title', 'IMSS')->orwhere('title', 'ISR')->orwhere('title','Subsidio');
+            //             })->get();
+              $saturationdeductions = SaturationDeduction::where('employee_id', $id)->get();
+            
             foreach ($saturationdeductions as  $value) {
                 if ($value->type == 'percentage') {
                     $employee          = Employee::find($value->employee_id);
@@ -259,28 +267,37 @@ class SetSalaryController extends Controller
         //     }
         // }
         // $Extra = $Asistidos*(1/6);
-        // $labor = $Asistidos + $Extra;
+        // $laboradorados = $Asistidos + $Extra;
 
         $labor=new AttendanceEmployee();
+       
         $result=$labor->calculateworkingtime( $employee->id, $start, $end);
-        
+          
         $importe = $diferencia * $result["Asistidos"];
         $excedentepatro = 0.4;
         $cuotacorre = $importe * $excedentepatro;
         $excedentpatron = 0.40 * $excedentepatro;
 
-        $prestaciodiner = 0.25 * ($SDI * $result["labor"]);
-        $prestacioespec = 0.375 * ($SDI *$result["labor"]);
-        $invalidday = 0.625 * ($SDI * $result["labor"]);
-        $guarderyprestasoc = 1.125 * ($SDI * $result["labor"]);
-
+        $prestaciodiner = 0.25 * $SDI * $result["labor"];
+    
+        $prestacioespec = 0.375 * $SDI *$result["labor"];
+        $invalidday = 0.625 * $SDI * $result["labor"];
+        $guarderyprestasoc = 1.125 * $SDI * $result["labor"];
+     
         $totalimss = ($excedentpatron +  $prestaciodiner +  $prestacioespec +  $invalidday + $guarderyprestasoc);
-
+     
         $baseValueIsr = Isr2024Weekly::where('limif', '<', $employee->salary* $result["labor"])
                                     ->where('limsu', '>', $employee->salary* $result["labor"])
                                     ->get();
-        $Isr = floatval($baseValueIsr[0]->cuota) + ((floatval($employee->saltots)-floatval($baseValueIsr[0]->limif))*floatval($baseValueIsr[0]->porcen));
-        
+                                    // var_dump($baseValueIsr); die();
+                                    
+        if(!empty($baseValueIsr) && $baseValueIsr->count()>0){
+            
+            $Isr = floatval($baseValueIsr[0]->cuota) + ((floatval($employee->saltots)-floatval($baseValueIsr[0]->limif))*floatval($baseValueIsr[0]->porcen));
+        }else{
+            $Isr=0;
+        }
+       
         if (floatval($employee->salary)*$result["labor"]<2271){
             $subsidio =89.00;
         }else{
