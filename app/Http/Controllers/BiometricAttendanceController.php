@@ -34,7 +34,7 @@ class BiometricAttendanceController extends Controller
             'end_time' => $end_date,
             'page_size' => 10000,
         ]);
-
+ 
         $curl = curl_init();
         if (!empty($token)) {
             try {
