@@ -56,6 +56,7 @@ class AttendanceEmployee extends Model
             if($value->date==$sunday->format("Y-m-d")){
                 if ($value->clock_in!=null){
                     $result["sunday"]=1;
+                    $Asistidos ++;
                 }
             }else{
                 if ($value->clock_in!=null){
