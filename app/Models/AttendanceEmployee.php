@@ -44,7 +44,7 @@ class AttendanceEmployee extends Model
             $i += 1;
         }
         
-      // Move $start back by the total number of iterationsasdfasdf
+      // Move $start back by the total number of iterationsasdfasdfasdfasdfasdf
         $start->modify('-' . $i . ' days');
         
         $attendanceEmployees = AttendanceEmployee::where('employee_id', $employee_id)->where('date', '>=', $start)->where('date', '<', $end)->get();
