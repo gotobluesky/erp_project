@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Designation extends Model
 {
     protected $fillable = [
-        'branch_id','department_id','name','created_by'
+        'branch_id','department_id', 'subdepartment_id','name','created_by'
     ];
 
     public function branch(){
@@ -17,5 +17,9 @@ class Designation extends Model
     public function departments()
     {
         return $this->hasOne('App\Models\Department', 'id', 'department_id');
+    }
+     public function subdepartments()
+    {
+        return $this->hasOne('App\Models\Subdepartment', 'id', 'subdepartment_id');
     }
 }

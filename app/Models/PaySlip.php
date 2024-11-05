@@ -31,4 +31,5 @@ class PaySlip extends Model
     {
         return $this->hasOne('App\Models\Employee', 'id', 'employee_id');
     }
+ 
 }

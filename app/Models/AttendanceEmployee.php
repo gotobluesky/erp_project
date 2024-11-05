@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use DateTime;
 class AttendanceEmployee extends Model
 {
     protected $fillable = [
@@ -29,21 +29,43 @@ class AttendanceEmployee extends Model
         return $this->hasOne('App\Models\Employee', 'id', 'employee_id');
     }
     public function calculateworkingtime($employee_id, $start, $end){
-        // return 1;
        
-        $attendanceEmployees = AttendanceEmployee::where('employee_id', $employee_id)->whereBetween('date', [$start, $end])->get();
-        // $attendanceEmployees = AttendanceEmployee::where('employee_id', 136)
-        // ->whereBetween('date', ['2024-10-19', '2024-10-25'])
-        // ->get();
-      
+        $sunday = null; // Initialize the Sunday variable
+        $i = 0;
+        while ($start < $end) {
+            $dayOfWeek = $start->format('l');
+    
+            if ($dayOfWeek == "Sunday") {
+                $sunday = clone $start; // Clone the DateTime object when we find a Sunday
+              
+            }
+    
+            $start->modify('+1 day'); // Move to the next day
+            $i += 1;
+        }
+        
+      // Move $start back by the total number of iterations
+        $start->modify('-' . $i . ' days');
+         
+        $attendanceEmployees = AttendanceEmployee::where('employee_id', $employee_id)->where('date', '>=', $start)->where('date', '<', $end)->get();
+       
         $Asistidos = 0;
+        $result["sunday"]=0;
         foreach ( $attendanceEmployees as $value){
-            if ($value->clock_in!=null){
-                $Asistidos ++;
+           
+            if($value->date==$sunday->format("Y-m-d")){
+                if ($value->clock_in!=null){
+                    $result["sunday"]=1;
+                }
+            }else{
+                if ($value->clock_in!=null){
+                    $Asistidos ++;
+                }
             }
         }
-         
+        
         $Extra = $Asistidos*(1/6);
+        
         $laboradorados = $Asistidos + $Extra;
         $result["labor"]=$laboradorados;
         $result["Asistidos"]=$Asistidos;

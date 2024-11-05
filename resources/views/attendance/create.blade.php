@@ -3,7 +3,7 @@
     <div class="row">
         <div class="col-md-6">
             {{Form::label('employee_id',__('Employee'))}}
-            {{Form::select('employee_id',$employees,null,array('class'=>'form-control  '))}}
+            {{Form::select('user_id',$employees,null,array('class'=>'form-control  '))}}
         </div>
         <div class="col-md-6">
             {{Form::label('date',__('Date'))}}

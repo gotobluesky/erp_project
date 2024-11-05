@@ -1,3 +1,5 @@
+
+
 <?php $__env->startSection('page-title'); ?>
     <?php echo e(__('Employee Set Salary')); ?>
 
@@ -47,6 +49,10 @@
                             <div class="project-info-inner mt-3 col-11">
                                 <b class="m-0"> <?php echo e(__('Account Type')); ?> </b>
                                 <div class="project-amnt pt-1"><?php echo e(!empty($employee->account_type()) ? $employee->account_type() : '-'); ?></div>
+                            </div>
+                            <div class="project-info-inner mt-3 col-1">
+                                <b class="m-0"> <?php echo e(__('Salario Total')); ?> </b>
+                                <div class="project-amnt pt-1"><?php echo e($employee->saltots); ?></div>
                             </div>
                         </div>
                     </div>

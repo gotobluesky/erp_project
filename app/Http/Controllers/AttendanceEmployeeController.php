@@ -166,7 +166,7 @@ class AttendanceEmployeeController extends Controller
         {
             $validator = \Validator::make(
                 $request->all(), [
-                                   'employee_id' => 'required',
+                                   'user_id' => 'required',
                                    'date' => 'required',
                                    'clock_in' => 'required',
                                    'clock_out' => 'required',
@@ -178,10 +178,10 @@ class AttendanceEmployeeController extends Controller
 
                 return redirect()->back()->with('error', $messages->first());
             }
-
+            $employee =Employee::where('user_id', '=', $request->user_id)->get();
             $startTime  = Utility::getValByName('company_start_time');
             $endTime    = Utility::getValByName('company_end_time');
-            $attendance = AttendanceEmployee::where('employee_id', '=', $request->employee_id)->where('date', '=', $request->date)->where('clock_out', '=', '00:00:00')->get()->toArray();
+            $attendance = AttendanceEmployee::where('employee_id', '=', $employee->id)->where('date', '=', $request->date)->where('clock_out', '=', '00:00:00')->get()->toArray();
             if($attendance)
             {
                 return redirect()->route('attendanceemployee.index')->with('error', __('Employee Attendance Already Created.'));
@@ -220,7 +220,8 @@ class AttendanceEmployeeController extends Controller
                 }
 
                 $employeeAttendance                = new AttendanceEmployee();
-                $employeeAttendance->employee_id   = $request->employee_id;
+                $employeeAttendance->employee_id   = $employee->id;
+                $employeeAttendance->employee_name   = $employee->name;
                 $employeeAttendance->date          = $request->date;
                 $employeeAttendance->status        = 'Present';
                 $employeeAttendance->clock_in      = $request->clock_in . ':00';

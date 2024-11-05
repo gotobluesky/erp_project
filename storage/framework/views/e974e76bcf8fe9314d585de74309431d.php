@@ -1,10 +1,10 @@
 
-<?php echo e(Form::model($designation, ['route' => ['designation.update', $designation->id], 'method' => 'PUT'])); ?>
+<?php echo e(Form::model($subdepartment, ['route' => ['subdepartment.update', $subdepartment->id], 'method' => 'PUT'])); ?>
 
 <div class="modal-body">
 
     <div class="row">
-       <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
                 <?php echo e(Form::label('branch_id', __('Select Branch*'), ['class' => 'form-label'])); ?>
 
@@ -28,22 +28,9 @@
         </div>
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
-                <div class="form-icon-user" id="subdepartment_id">
-                    <?php echo e(Form::label('subdepartment_id', __('Subdepartment*'), ['class' => 'form-label'])); ?>
-
-                    <div class="form-icon-user">
-                        <?php echo e(Form::select('subdepartment_id', $subdepartment, null, ['class' => 'form-control branch_id', 'required' => 'required', 'id' => 'subdepartment_id'])); ?>
-
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-12 col-md-12 col-sm-12">
-            <div class="form-group">
-                <?php echo e(Form::label('name', __('Name'), ['class' => 'form-label'])); ?><span class="text-danger pl-1">*</span>
+                <?php echo e(Form::label('name', __('Name SubDepartment'), ['class' => 'form-label'])); ?><span class="text-danger pl-1">*</span>
                 <div class="form-icon-user">
-                    <?php echo e(Form::text('name', null, ['class' => 'form-control', 'required' => 'required', 'placeholder' => __('Enter Designation Name')])); ?>
+                    <?php echo e(Form::text('name', $subdepartment->name, ['class' => 'form-control', 'required' => 'required', 'placeholder' => __('Enter Subdepartment Name')])); ?>
 
                 </div>
                 <?php $__errorArgs = ['name'];
@@ -69,4 +56,6 @@ unset($__errorArgs, $__bag); ?>
 </div>
 <?php echo e(Form::close()); ?>
 
-<?php /**PATH /home/ix8ccsto9l8d/public_html/f100.com.mx/nomina/resources/views/designation/edit.blade.php ENDPATH**/ ?>
+
+
+<?php /**PATH /home/ix8ccsto9l8d/public_html/f100.com.mx/nomina/resources/views/subdepartment/edit.blade.php ENDPATH**/ ?>

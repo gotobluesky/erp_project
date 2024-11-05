@@ -93,7 +93,7 @@
                                 <?php echo Form::label('address', __('Address'), ['class' => 'form-label']); ?><span class="text-danger pl-1">*</span>
                                 <?php echo Form::textarea('address', old('address'), [
                                     'class' => 'form-control',
-                                    'rows' => 3,
+                                    'rows' => 5,
                                     'required' => 'required',
                                     'placeholder' => 'Enter employee Address',
                                 ]); ?>
@@ -110,7 +110,7 @@
                         <div class="card-body employee-detail-create-body">
                             <div class="row">
                                 <?php echo csrf_field(); ?>
-                                <div class="form-group">
+                                <div class="form-group col-md-6">
                                     <?php echo Form::label('employee_id', __('Employee ID'), ['class' => 'form-label']); ?>
 
                                     <?php echo Form::text('employee_id', $employeesId, ['class' => 'form-control', 'disabled' => 'disabled']); ?>
@@ -127,8 +127,7 @@
                                 </div>
 
                                 <div class="form-group col-md-6">
-                                    
-
+                              
                                     <div class="form-icon-user" id="department_id">
                                         <?php echo e(Form::label('department_id', __('Department'), ['class' => 'form-label'])); ?>
 
@@ -138,7 +137,17 @@
                                     </div>
 
                                 </div>
+                                <div class="form-group col-md-6">
+                                  
 
+                                    <div class="form-icon-user" id="subdepartment_id">
+                                        <?php echo e(Form::label('subdepartment', __('SubDepartment'), ['class' => 'form-label'])); ?>
+
+                                        <select class="form-control subdepartment_id" name="subdepartment_id" id="subdepartment_id"
+                                            placeholder="Select SubDepartment">
+                                        </select>
+                                    </div>
+                                </div>
                                 <div class="form-group col-md-6">
                                     <?php echo e(Form::label('designation_id', __('Select Designation'), ['class' => 'form-label'])); ?>
 
@@ -165,6 +174,12 @@
                                     <?php echo Form::label('company_doj', __('Company Date Of Joining'), ['class' => 'form-label']); ?>
 
                                     <?php echo e(Form::date('company_doj', null, ['class' => 'form-control current_date', 'required' => 'required', 'autocomplete' => 'off', 'placeholder' => 'Select Company Date Of Joining'])); ?>
+
+                                </div>
+                                 <div class="form-group">
+                                     <?php echo Form::label('fecha_de_alta', __('Fecha de alta'), ['class' => 'form-label']); ?>
+
+                                    <?php echo e(Form::date('fecha_de_alta', null, ['class' => 'form-control current_date', 'required' => 'required', 'autocomplete' => 'off', 'placeholder' => 'Fecha de alta'])); ?>
 
                                 </div>
                             </div>
@@ -336,7 +351,7 @@ unset($__errorArgs, $__bag); ?> "
     <script>
         $(document).ready(function() {
             var b_id = $('#branch_id').val();
-            // getDepartment(b_id);
+            getDepartment(b_id);
         });
         $(document).on('change', 'select[name=branch_id]', function() {
             var branch_id = $(this).val();
@@ -354,7 +369,7 @@ unset($__errorArgs, $__bag); ?> "
                     "_token": "<?php echo e(csrf_token()); ?>",
                 },
                 success: function(data) {
-
+                    console.log(data);
                     $('.department_id').empty();
                     var emp_selct = `<select class="form-control department_id" name="department_id" id="choices-multiple"
                                             placeholder="Select Department" >
@@ -362,25 +377,66 @@ unset($__errorArgs, $__bag); ?> "
                     $('.department_div').html(emp_selct);
 
                     $('.department_id').append('<option value=""> <?php echo e(__('Select Department')); ?> </option>');
-                    $.each(data, function(key, value) {
-                        $('.department_id').append('<option value="' + key + '">' + value +
+                    $.each(data, function(value) {
+                        console.log(data[value]['id']);
+                        $('.department_id').append('<option value="' + data[value]['id'] + '">' + data[value]['name'] +
+                            '</option>');
+                        $('.subdepartment_id').append('<option value="' + data[value]['id'] + '">' + data[value]['subdepartment'] +
                             '</option>');
                     });
-                    new Choices('#choices-multiple', {
-                        removeItemButton: true,
-                    });
+                    // new Choices('#choices-multiple', {
+                    //     removeItemButton: true,
+                    // });
                 }
             });
         }
-
+       
         $(document).ready(function() {
             var d_id = $('.department_id').val();
-            getDesignation(d_id);
+            getSubdepartment(d_id);
         });
 
         $(document).on('change', 'select[name=department_id]', function() {
             var department_id = $(this).val();
-            getDesignation(department_id);
+            getSubdepartment(department_id);
+        });
+
+        function getSubdepartment(did) {
+
+            $.ajax({
+                url: '<?php echo e(route('subdepartment.json')); ?>',
+                type: 'POST',
+                data: {
+                    "department_id": did,
+                    "_token": "<?php echo e(csrf_token()); ?>",
+                },
+                success: function(data) {
+
+                    $('.subdepartment_id').empty();
+                    var emp_selct = `<select class="form-control subdepartment_id" name="subdepartment_id"
+                                                 placeholder="Select Subdepartment" required>
+                                            </select>`;
+                    $('.subdepartment_div').html(emp_selct);
+
+                    $('.subdepartment_id').append('<option value=""> <?php echo e(__('Select Subdepartment')); ?> </option>');
+                    console.log(data)
+                    $.each(data, function(key, value) {
+                        $('.subdepartment_id').append('<option value="' + key + '">' + value +
+                            '</option>');
+                    });
+                  
+                }
+            });
+        }
+        
+        $(document).ready(function() {
+            var d_id = $('.subdepartment_id').val();
+            getDesignation(d_id);
+        });
+
+        $(document).on('change', 'select[name=subdepartment_id]', function() {
+            var subdepartment_id = $(this).val();
+            getDesignation(subdepartment_id);
         });
 
         function getDesignation(did) {
@@ -389,11 +445,11 @@ unset($__errorArgs, $__bag); ?> "
                 url: '<?php echo e(route('employee.json')); ?>',
                 type: 'POST',
                 data: {
-                    "department_id": did,
+                    "subdepartment_id": did,
                     "_token": "<?php echo e(csrf_token()); ?>",
                 },
                 success: function(data) {
-
+                    console.log(data);
                     $('.designation_id').empty();
                     // var emp_selct = ` <select class="form-control designation_id" name="designation_id" id="choices-multiple"
                 //                         placeholder="Select Designation" >
@@ -408,9 +464,9 @@ unset($__errorArgs, $__bag); ?> "
                         $('.designation_id').append('<option value="' + key + '">' + value +
                             '</option>');
                     });
-                    new Choices('#choices-multiple', {
-                        removeItemButton: true,
-                    });
+                    // new Choices('#choices-multiple', {
+                    //     removeItemButton: true,
+                    // });
                 }
             });
         }

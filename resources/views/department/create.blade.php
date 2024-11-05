@@ -24,19 +24,7 @@
                 @enderror
             </div>
         </div>
-        <div class="col-lg-12 col-md-12 col-sm-12">
-            <div class="form-group">
-                {{ Form::label('name', __('Name SubDepartment'), ['class' => 'form-label']) }}<span class="text-danger pl-1">*</span>
-                <div class="form-icon-user">
-                    {{ Form::text('subdepartment', null, ['class' => 'form-control', 'required' => 'required', 'placeholder' => __('Enter Department Name')]) }}
-                </div>
-                @error('name')
-                    <span class="invalid-name" role="alert">
-                        <strong class="text-danger">{{ $message }}</strong>
-                    </span>
-                @enderror
-            </div>
-        </div>
+        
 
     </div>
 </div>

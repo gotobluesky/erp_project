@@ -267,6 +267,12 @@ class UsersTableSeeder extends Seeder
                 "updated_at" => date('Y-m-d H:i:s'),
             ],
             [
+                "name" => "Manage Subdepartment",
+                "guard_name" => "web",
+                "created_at" => date('Y-m-d H:i:s'),
+                "updated_at" => date('Y-m-d H:i:s'),
+            ],
+            [
                 "name" => "Create Department",
                 "guard_name" => "web",
                 "created_at" => date('Y-m-d H:i:s'),
@@ -1923,6 +1929,7 @@ class UsersTableSeeder extends Seeder
             ["name" => "Edit Termination"],
             ["name" => "Delete Termination"],
             ["name" => "Manage Department"],
+            ["name" => "Manage SubDepartment"],
             ["name" => "Create Department"],
             ["name" => "Edit Department"],
             ["name" => "Delete Department"],
@@ -2249,6 +2256,7 @@ class UsersTableSeeder extends Seeder
             ["name" => "Edit Termination"],
             ["name" => "Delete Termination"],
             ["name" => "Manage Department"],
+            ["name" => "Manage SubDepartment"],
             ["name" => "Create Department"],
             ["name" => "Edit Department"],
             ["name" => "Delete Department"],

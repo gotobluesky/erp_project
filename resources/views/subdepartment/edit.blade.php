@@ -1,9 +1,9 @@
 
-{{ Form::model($designation, ['route' => ['designation.update', $designation->id], 'method' => 'PUT']) }}
+{{ Form::model($subdepartment, ['route' => ['subdepartment.update', $subdepartment->id], 'method' => 'PUT']) }}
 <div class="modal-body">
 
     <div class="row">
-       <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
                 {{ Form::label('branch_id', __('Select Branch*'), ['class' => 'form-label']) }}
                 <div class="form-icon-user">
@@ -23,20 +23,9 @@
         </div>
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
-                <div class="form-icon-user" id="subdepartment_id">
-                    {{ Form::label('subdepartment_id', __('Subdepartment*'), ['class' => 'form-label']) }}
-                    <div class="form-icon-user">
-                        {{ Form::select('subdepartment_id', $subdepartment, null, ['class' => 'form-control branch_id', 'required' => 'required', 'id' => 'subdepartment_id']) }}
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="col-lg-12 col-md-12 col-sm-12">
-            <div class="form-group">
-                {{ Form::label('name', __('Name'), ['class' => 'form-label']) }}<span class="text-danger pl-1">*</span>
+                {{ Form::label('name', __('Name SubDepartment'), ['class' => 'form-label']) }}<span class="text-danger pl-1">*</span>
                 <div class="form-icon-user">
-                    {{ Form::text('name', null, ['class' => 'form-control', 'required' => 'required', 'placeholder' => __('Enter Designation Name')]) }}
+                    {{ Form::text('name', $subdepartment->name, ['class' => 'form-control', 'required' => 'required', 'placeholder' => __('Enter Subdepartment Name')]) }}
                 </div>
                 @error('name')
                     <span class="invalid-name" role="alert">
@@ -53,3 +42,5 @@
     <input type="submit" value="{{ __('Update') }}" class="btn btn-primary">
 </div>
 {{ Form::close() }}
+
+

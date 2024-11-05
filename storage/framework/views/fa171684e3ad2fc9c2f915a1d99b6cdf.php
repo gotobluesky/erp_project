@@ -63,15 +63,15 @@
                                     <td><?php echo e($employee->name); ?></td>
                                     <td><?php echo e(!empty($employee->email) ? $employee->email : '-'); ?></td>
                                     <td>
-                                        <?php echo e(!empty($employee->branch_id) ? $employee->branch->name : '-'); ?>
+                                        <?php echo e(!empty($employee->branch->name) ? $employee->branch->name : '-'); ?>
 
                                     </td>
                                     <td>
-                                        <?php echo e(!empty($employee->department_id) ? $employee->department->name : '-'); ?>
+                                        <?php echo e(!empty($employee->department->name) ? $employee->department->name : '-'); ?>
 
                                     </td>
                                     <td>
-                                        <?php echo e(!empty($employee->designation_id) ? $employee->designation->name : '-'); ?>
+                                        <?php echo e(!empty($employee->designation->name) ? $employee->designation->name : '-'); ?>
 
                                     </td>
                                     <td>

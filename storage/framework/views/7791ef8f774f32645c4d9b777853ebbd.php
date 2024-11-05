@@ -1,10 +1,10 @@
 
-<?php echo e(Form::open(['url' => 'designation', 'method' => 'post'])); ?>
+<?php echo e(Form::open(['url' => 'subdepartment', 'method' => 'post'])); ?>
 
 <div class="modal-body">
 
     <div class="row">
-         <div class="col-lg-12 col-md-12 col-sm-12">
+        <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
                 <?php echo e(Form::label('branch_id', __('Select Branch*'), ['class' => 'form-label'])); ?>
 
@@ -25,23 +25,11 @@
                 </div>
             </div>
         </div>
-         <div class="col-lg-12 col-md-12 col-sm-12">
-            <div class="form-group">
-                <div class="form-icon-user" id="subdepartment_id">
-                    <?php echo e(Form::label('subdepartment_id', __('Subdepartment*'), ['class' => 'form-label'])); ?>
-
-                    <select class="form-control subdepartment_id" name="subdepartment_id" id="subdepartment_id"
-                        placeholder="Select Subdepartment">
-                    </select>
-                </div>
-            </div>
-        </div>
-
         <div class="col-lg-12 col-md-12 col-sm-12">
             <div class="form-group">
-                <?php echo e(Form::label('name', __('Name'), ['class' => 'form-label'])); ?><span class="text-danger pl-1">*</span>
+                <?php echo e(Form::label('name', __('Name SubDepartment'), ['class' => 'form-label'])); ?><span class="text-danger pl-1">*</span>
                 <div class="form-icon-user">
-                    <?php echo e(Form::text('name', null, ['class' => 'form-control', 'required' => 'required', 'placeholder' => __('Enter Designation Name')])); ?>
+                    <?php echo e(Form::text('name', null, ['class' => 'form-control', 'required' => 'required', 'placeholder' => __('Enter Subdepartment Name')])); ?>
 
                 </div>
                 <?php $__errorArgs = ['name'];
@@ -69,6 +57,7 @@ unset($__errorArgs, $__bag); ?>
 
 
 
+
     <script>
          $(document).ready(function() {
             var b_id = $('#branch_id').val();
@@ -89,7 +78,7 @@ unset($__errorArgs, $__bag); ?>
                     "_token": "<?php echo e(csrf_token()); ?>",
                 },
                 success: function(data) {
-                 
+                    console.log(data);
                     $('.department_id').empty();
                     var emp_selct = `<select class="form-control department_id" name="department_id" id="choices-multiple"
                                             placeholder="Select Department" >
@@ -107,18 +96,18 @@ unset($__errorArgs, $__bag); ?>
 
         $(document).ready(function() {
             var d_id = $('.department_id').val();
-            getSubdepartment(d_id);
+            getDesignation(d_id);
         });
 
         $(document).on('change', 'select[name=department_id]', function() {
             var department_id = $(this).val();
-            getSubdepartment(department_id);
+            getDesignation(department_id);
         });
 
-        function getSubdepartment(did) {
+        function getDesignation(did) {
 
             $.ajax({
-                url: '<?php echo e(route('subdepartment.json')); ?>',
+                url: '<?php echo e(route('employee.json')); ?>',
                 type: 'POST',
                 data: {
                     "department_id": did,
@@ -126,16 +115,18 @@ unset($__errorArgs, $__bag); ?>
                 },
                 success: function(data) {
 
-                    $('.subdepartment_id').empty();
-                    var emp_selct = `<select class="form-control subdepartment_id" name="subdepartment_id"
-                                                 placeholder="Select Subdepartment" required>
+                    $('.designation_id').empty();
+                    // var emp_selct = ` <select class="form-control designation_id" name="designation_id" id="choices-multiple"
+                //                         placeholder="Select Designation" >
+                //                         </select>`;
+                    var emp_selct = `<select class="form-control designation_id" name="designation_id"
+                                                 placeholder="Select Designation" required>
                                             </select>`;
-                    $('.subdepartment_div').html(emp_selct);
+                    $('.designation_div').html(emp_selct);
 
-                    $('.subdepartment_id').append('<option value=""> <?php echo e(__('Select Subdepartment')); ?> </option>');
-                    console.log(data)
+                    $('.designation_id').append('<option value=""> <?php echo e(__('Select Designation')); ?> </option>');
                     $.each(data, function(key, value) {
-                        $('.subdepartment_id').append('<option value="' + key + '">' + value +
+                        $('.designation_id').append('<option value="' + key + '">' + value +
                             '</option>');
                     });
                   
@@ -143,5 +134,4 @@ unset($__errorArgs, $__bag); ?>
             });
         }
     </script>
-
-<?php /**PATH /home/ix8ccsto9l8d/public_html/f100.com.mx/nomina/resources/views/designation/create.blade.php ENDPATH**/ ?>
+<?php /**PATH /home/ix8ccsto9l8d/public_html/f100.com.mx/nomina/resources/views/subdepartment/create.blade.php ENDPATH**/ ?>

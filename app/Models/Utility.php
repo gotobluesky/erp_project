@@ -259,134 +259,135 @@ class Utility extends Model
     public static function employeePayslipDetail($employeeId, $payslip_id)
     {
         // allowance
-        $earning['allowance'] = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
+        // $earning['allowance'] = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
 
-        $employess = Employee::find($employeeId);
+        // $employess = Employee::find($employeeId);
 
-        $totalAllowance = 0;
+        // $totalAllowance = 0;
 
-        $arrayJson = json_decode($earning['allowance']);
-        foreach ($arrayJson as $earn) {
-            $allowancejson = json_decode($earn->allowance);
-            foreach ($allowancejson as $allowances) {
-                if ($allowances->type == 'percentage') {
-                    $empall  = $allowances->amount * $earn->basic_salary / 100;
-                } else {
-                    $empall = $allowances->amount;
-                }
-                $totalAllowance += $empall;
-            }
-        }
+        // $arrayJson = json_decode($earning['allowance']);
+        // foreach ($arrayJson as $earn) {
+        //     $allowancejson = json_decode($earn->allowance);
+        //     foreach ($allowancejson as $allowances) {
+        //         if ($allowances->type == 'percentage') {
+        //             $empall  = $allowances->amount * $earn->basic_salary / 100;
+        //         } else {
+        //             $empall = $allowances->amount;
+        //         }
+        //         $totalAllowance += $empall;
+        //     }
+        // }
+       
+        // // commission
+        // $earning['commission'] = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
 
-        // commission
-        $earning['commission'] = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
+        // $employess = Employee::find($employeeId);
 
-        $employess = Employee::find($employeeId);
+        // $totalCommission = 0;
 
-        $totalCommission = 0;
+        // $arrayJson = json_decode($earning['commission']);
 
-        $arrayJson = json_decode($earning['commission']);
+        // foreach ($arrayJson as $earn) {
+        //     $commissionjson = json_decode($earn->commission);
 
-        foreach ($arrayJson as $earn) {
-            $commissionjson = json_decode($earn->commission);
+        //     foreach ($commissionjson as $commissions) {
 
-            foreach ($commissionjson as $commissions) {
+        //         if ($commissions->type == 'percentage') {
+        //             $empcom  = $commissions->amount * $earn->basic_salary / 100;
+        //         } else {
+        //             $empcom = $commissions->amount;
+        //         }
+        //         $totalCommission += $empcom;
+        //     }
+        // }
+ 
+        // // otherpayment
+        // $earning['otherPayment']      = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
 
-                if ($commissions->type == 'percentage') {
-                    $empcom  = $commissions->amount * $earn->basic_salary / 100;
-                } else {
-                    $empcom = $commissions->amount;
-                }
-                $totalCommission += $empcom;
-            }
-        }
+        // $employess = Employee::find($employeeId);
 
-        // otherpayment
-        $earning['otherPayment']      = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
+        // $totalotherpayment = 0;
 
-        $employess = Employee::find($employeeId);
+        // $arrayJson = json_decode($earning['otherPayment']);
 
-        $totalotherpayment = 0;
+        // foreach ($arrayJson as $earn) {
+        //     $otherpaymentjson = json_decode($earn->other_payment);
 
-        $arrayJson = json_decode($earning['otherPayment']);
+        //     foreach ($otherpaymentjson as $otherpay) {
+        //         if ($otherpay->type == 'percentage') {
+        //             $empotherpay  = $otherpay->amount * $earn->basic_salary / 100;
+        //         } else {
+        //             $empotherpay = $otherpay->amount;
+        //         }
+        //         $totalotherpayment += $empotherpay;
+        //     }
+        // }
 
-        foreach ($arrayJson as $earn) {
-            $otherpaymentjson = json_decode($earn->other_payment);
+        // //overtime
+        // $earning['overTime'] = Payslip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
 
-            foreach ($otherpaymentjson as $otherpay) {
-                if ($otherpay->type == 'percentage') {
-                    $empotherpay  = $otherpay->amount * $earn->basic_salary / 100;
-                } else {
-                    $empotherpay = $otherpay->amount;
-                }
-                $totalotherpayment += $empotherpay;
-            }
-        }
+        // $ot = 0;
 
-        //overtime
-        $earning['overTime'] = Payslip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
+        // $arrayJson = json_decode($earning['overTime']);
+        // foreach ($arrayJson as $overtime) {
+        //     $overtimes = json_decode($overtime->overtime);
+        //     foreach ($overtimes as $overt) {
+        //         $OverTime = $overt->number_of_days * $overt->hours * $overt->rate;
+        //         $ot += $OverTime;
+        //     }
+        // }
 
-        $ot = 0;
+        // // loan
+        // $deduction['loan'] = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
 
-        $arrayJson = json_decode($earning['overTime']);
-        foreach ($arrayJson as $overtime) {
-            $overtimes = json_decode($overtime->overtime);
-            foreach ($overtimes as $overt) {
-                $OverTime = $overt->number_of_days * $overt->hours * $overt->rate;
-                $ot += $OverTime;
-            }
-        }
+        // $employess = Employee::find($employeeId);
 
-        // loan
-        $deduction['loan'] = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
+        // $totalloan = 0;
 
-        $employess = Employee::find($employeeId);
+        // $arrayJson = json_decode($deduction['loan']);
 
-        $totalloan = 0;
+        // foreach ($arrayJson as $loan) {
+        //     $loans = json_decode($loan->loan);
 
-        $arrayJson = json_decode($deduction['loan']);
+        //     foreach ($loans as $emploans) {
 
-        foreach ($arrayJson as $loan) {
-            $loans = json_decode($loan->loan);
+        //         if ($emploans->type == 'percentage') {
+        //             $emploan  = $emploans->amount * $loan->basic_salary / 100;
+        //         } else {
+        //             $emploan = $emploans->amount;
+        //         }
+        //         $totalloan += $emploan;
+        //     }
+        // }
 
-            foreach ($loans as $emploans) {
+        // // saturation_deduction
+        // $deduction['deduction']      = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
 
-                if ($emploans->type == 'percentage') {
-                    $emploan  = $emploans->amount * $loan->basic_salary / 100;
-                } else {
-                    $emploan = $emploans->amount;
-                }
-                $totalloan += $emploan;
-            }
-        }
+        // $employess = Employee::find($employeeId);
 
-        // saturation_deduction
-        $deduction['deduction']      = PaySlip::where('employee_id', $employeeId)->where('id', $payslip_id)->get();
+        // $totaldeduction = 0;
 
-        $employess = Employee::find($employeeId);
+        // $arrayJson = json_decode($deduction['deduction']);
 
-        $totaldeduction = 0;
+        // // foreach ($arrayJson as $deductions) {
+        // //     $deduc = json_decode($deductions->saturation_deduction);
+        // //     var_dump($deductions->saturation_deduction); die();
+        // //     foreach ($deduc as $deduction_option) {
+        // //         if ($deduction_option->type == 'percentage') {
+        // //             $empdeduction  = $deduction_option->amount * $deductions->basic_salary / 100;
+        // //         } else {
+        // //             $empdeduction = $deduction_option->amount;
+        // //         }
+        // //         $totaldeduction += $empdeduction;
+        // //     }
+        // // }
 
-        $arrayJson = json_decode($deduction['deduction']);
+        // $payslip['earning']        = $earning;
+        // $payslip['totalEarning']   = $totalAllowance + $totalCommission + $totalotherpayment + $ot;
+        // $payslip['deduction']      = $deduction;
+        // // $payslip['totalDeduction'] = $totalloan + $totaldeduction;
 
-        foreach ($arrayJson as $deductions) {
-            $deduc = json_decode($deductions->saturation_deduction);
-            foreach ($deduc as $deduction_option) {
-                if ($deduction_option->type == 'percentage') {
-                    $empdeduction  = $deduction_option->amount * $deductions->basic_salary / 100;
-                } else {
-                    $empdeduction = $deduction_option->amount;
-                }
-                $totaldeduction += $empdeduction;
-            }
-        }
-
-        $payslip['earning']        = $earning;
-        $payslip['totalEarning']   = $totalAllowance + $totalCommission + $totalotherpayment + $ot;
-        $payslip['deduction']      = $deduction;
-        $payslip['totalDeduction'] = $totalloan + $totaldeduction;
-
-        return $payslip;
+        // return $payslip;
     }
 
     public static function delete_directory($dir)

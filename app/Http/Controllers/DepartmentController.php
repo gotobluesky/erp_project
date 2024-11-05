@@ -15,7 +15,7 @@ class DepartmentController extends Controller
         if(\Auth::user()->can('Manage Department'))
         {
             $departments = Department::where('created_by', '=', \Auth::user()->creatorId())->with('branch')->get();
-
+          
             return view('department.index', compact('departments'));
         }
         else
@@ -29,7 +29,7 @@ class DepartmentController extends Controller
         if(\Auth::user()->can('Create Department'))
         {
             $branch = Branch::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
-
+           
             return view('department.create', compact('branch'));
         }
         else
@@ -40,6 +40,7 @@ class DepartmentController extends Controller
 
     public function store(Request $request)
     {
+       
         if(\Auth::user()->can('Create Department'))
         {
 
@@ -59,7 +60,7 @@ class DepartmentController extends Controller
             $department             = new Department();
             $department->branch_id  = $request->branch_id;
             $department->name       = $request->name;
-            $department->subdepartment	= $request->subdepartment;
+            
             $department->created_by = \Auth::user()->creatorId();
             $department->save();
 

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Branch;
 use App\Models\Department;
 use App\Models\Designation;
+use App\Models\Subdepartment;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -15,13 +16,9 @@ class DesignationController extends Controller
     {
 
         if (\Auth::user()->can('Manage Designation')) {
-            $designations = Designation::where('created_by', '=', \Auth::user()->creatorId())->get()->toArrays();
-
-            $department = Department::where('id', '=', $designations->department_id)->get()->toArrays();
-            var_dump($designations);
-            var_dump($department);
-            die();
-            return view('designation.index', compact('designations', $department));
+            $designations = Designation::where('created_by', '=', \Auth::user()->creatorId())->get();
+           
+            return view('designation.index', compact('designations'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
@@ -30,10 +27,8 @@ class DesignationController extends Controller
     public function create()
     {
         if (\Auth::user()->can('Create Designation')) {
-            $branchs     = Branch::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id');
-            $departments = Department::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id');
-
-            return view('designation.create', compact('branchs', 'departments'));
+            $branches     = Branch::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id');
+            return view('designation.create', compact('branches'));
         } else {
             return response()->json(['error' => __('Permission denied.')], 401);
         }
@@ -48,6 +43,7 @@ class DesignationController extends Controller
                 [
                     'branch_id' => 'required',
                     'department_id' => 'required',
+                    'subdepartment_id'=> 'required',
                     'name' => 'required|max:20',
                 ]
             );
@@ -66,6 +62,7 @@ class DesignationController extends Controller
             $designation                = new Designation();
             $designation->branch_id     = $branch;
             $designation->department_id = $request->department_id;
+            $designation->subdepartment_id = $request->subdepartment_id;
             $designation->name          = $request->name;
             $designation->created_by    = \Auth::user()->creatorId();
 
@@ -87,14 +84,14 @@ class DesignationController extends Controller
 
         if (\Auth::user()->can('Edit Designation')) {
             if ($designation->created_by == \Auth::user()->creatorId()) {
-                if (!empty($designation->branch_id)) {
-                    $branchs     = Branch::where('id', $designation->branch_id)->first()->pluck('name', 'id');
-                } else {
-                    $branchs     = Branch::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id');
-                }
-                $departments = Department::where('id', $designation->department_id)->first()->pluck('name', 'id');
-
-                return view('designation.edit', compact('designation', 'departments', 'branchs'));
+               
+                $branch     = Branch::where('id', $designation->branch_id)->pluck('name', 'id');
+                
+                $department = Department::where('id', $designation->department_id)->pluck('name', 'id');
+              
+                $subdepartment = Subdepartment::where('id', $designation->subdepartment_id)->pluck('name', 'id');
+             
+                return view('designation.edit', compact('designation', 'department', 'branch', 'subdepartment'));
             } else {
                 return response()->json(['error' => __('Permission denied.')], 401);
             }
@@ -112,6 +109,7 @@ class DesignationController extends Controller
                     [
                         'branch_id' => 'required',
                         'department_id' => 'required',
+                        'subdepartment_id'=>'required',
                         'name' => 'required|max:20',
                     ]
                 );
@@ -128,8 +126,9 @@ class DesignationController extends Controller
                 }
 
                 $designation->name          = $request->name;
-                $designation->branch_id     = $branch;
+                $designation->branch_id     =  $request->branch_id;
                 $designation->department_id = $request->department_id;
+                $designation->subdepartment_id = $request->subdepartment_id;
                 $designation->save();
 
                 return redirect()->route('designation.index')->with('success', __('Designation  successfully updated.'));

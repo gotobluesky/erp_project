@@ -34,12 +34,14 @@ class SetSalaryController extends Controller
             // var_dump($employees); die();
             $labor=new AttendanceEmployee();
             $startend=$this->getweek();
+            
             foreach($employees as $employee){
-                $result=$labor->calculateworkingtime( $employee->id, $startend["start"], $startend["end"]);
-
+                $result=$labor->calculateworkingtime( $employee->id, new DateTime($startend["start"]), new DateTime($startend["end"]));
+                 
                 $employee->net_salary=$employee->salary * $result["labor"];
 
             }
+            
             return view('setsalary.index', compact('employees'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
@@ -83,7 +85,7 @@ class SetSalaryController extends Controller
     public function getweek(){
         $currentDate = new DateTime();
         $sevenDaysAgo = clone $currentDate; // Clone to avoid modifying the original object
-        $sevenDaysAgo->modify('-6 days'); // Subtract 7 days
+        $sevenDaysAgo->modify('-7 days'); // Subtract 7 days
         $start=$sevenDaysAgo->format('Y-m-d'); 
         $end=$currentDate->format('Y-m-d');
         
@@ -271,7 +273,7 @@ class SetSalaryController extends Controller
 
         $labor=new AttendanceEmployee();
        
-        $result=$labor->calculateworkingtime( $employee->id, $start, $end);
+        $result=$labor->calculateworkingtime( $employee->id, new DateTime($start), new DateTime($end));
           
         $importe = $diferencia * $result["Asistidos"];
         $excedentepatro = 0.4;

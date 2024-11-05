@@ -4,19 +4,19 @@
 
 
 <?php $__env->startSection('page-title'); ?>
-   <?php echo e(__("Manage Department")); ?>
+   <?php echo e(__("Manage Subdepartment")); ?>
 
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('breadcrumb'); ?>
     <li class="breadcrumb-item"><a href="<?php echo e(route('home')); ?>"><?php echo e(__("Home")); ?></a></li>
-    <li class="breadcrumb-item"><?php echo e(__("Department")); ?></li>
+    <li class="breadcrumb-item"><?php echo e(__("Subdepartment")); ?></li>
 <?php $__env->stopSection(); ?>
 
 <?php $__env->startSection('action-button'); ?>
-<?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Create Department')): ?>
-        <a href="#" data-url="<?php echo e(route('department.create')); ?>" data-ajax-popup="true"
-            data-title="<?php echo e(__('Create New Department')); ?>" data-bs-toggle="tooltip" title="" class="btn btn-sm btn-primary"
+<?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Create Subdepartment')): ?>
+        <a href="#" data-url="<?php echo e(route('subdepartment.create')); ?>" data-ajax-popup="true"
+            data-title="<?php echo e(__('Create New Subdepartment')); ?>" data-bs-toggle="tooltip" title="" class="btn btn-sm btn-primary"
             data-bs-original-title="<?php echo e(__('Create')); ?>">
             <i class="ti ti-plus"></i>
         </a>
@@ -37,25 +37,26 @@
                             <tr>
                                 <th><?php echo e(__('Branch')); ?></th>
                                 <th><?php echo e(__('Department')); ?></th>
-                               
+                                <th><?php echo e(__('SubDepartment')); ?></th>
                                 <th width="200px"><?php echo e(__('Action')); ?></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <?php $__currentLoopData = $departments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $department): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            <?php $__currentLoopData = $subdepartments; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $subdepartment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                            
                                 <tr>
-                                    <td><?php echo e(!empty($department->branch) ? $department->branch->name : ''); ?></td>
-                                    <td><?php echo e($department->name); ?></td>
-                                    
+                                    <td><?php echo e(!empty($subdepartment->branch->name) ? $subdepartment->branch->name : ''); ?></td>
+                                    <td><?php echo e(!empty($subdepartment->department->name) ? $subdepartment->department->name : ''); ?></td>
+                                    <td><?php echo e($subdepartment->name); ?></td>
 
                                     <td class="Action">
                                         <span>
-                                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Edit Department')): ?>
+                                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Edit Subdepartment')): ?>
                                                 <div class="action-btn bg-info ms-2">
                                                     <a href="#" class="mx-3 btn btn-sm  align-items-center"
-                                                        data-url="<?php echo e(URL::to('department/' . $department->id . '/edit')); ?>"
+                                                        data-url="<?php echo e(URL::to('subdepartment/' . $subdepartment->id . '/edit')); ?>"
                                                         data-ajax-popup="true" data-size="md" data-bs-toggle="tooltip" title=""
-                                                        data-title="<?php echo e(__('Edit Department')); ?>"
+                                                        data-title="<?php echo e(__('Edit Subdepartment')); ?>"
                                                         data-bs-original-title="<?php echo e(__('Edit')); ?>">
                                                         <i class="ti ti-pencil text-white"></i>
                                                     </a>
@@ -63,9 +64,9 @@
                                             <?php endif; ?>
                                         
 
-                                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Delete Department')): ?>
+                                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Delete Subdepartment')): ?>
                                                 <div class="action-btn bg-danger ms-2">
-                                                    <?php echo Form::open(['method' => 'DELETE', 'route' => ['department.destroy', $department->id], 'id' => 'delete-form-' . $department->id]); ?>
+                                                    <?php echo Form::open(['method' => 'DELETE', 'route' => ['subdepartment.destroy', $subdepartment->id], 'id' => 'delete-form-' . $subdepartment->id]); ?>
 
                                                     <a href="#" class="mx-3 btn btn-sm  align-items-center bs-pass-para"
                                                         data-bs-toggle="tooltip" title="" data-bs-original-title="Delete"
@@ -86,4 +87,5 @@
         </div>
 <?php $__env->stopSection(); ?>
 
-<?php echo $__env->make('layouts.admin', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/ix8ccsto9l8d/public_html/f100.com.mx/nomina/resources/views/department/index.blade.php ENDPATH**/ ?>
+
+<?php echo $__env->make('layouts.admin', \Illuminate\Support\Arr::except(get_defined_vars(), ['__data', '__path']))->render(); ?><?php /**PATH /home/ix8ccsto9l8d/public_html/f100.com.mx/nomina/resources/views/subdepartment/index.blade.php ENDPATH**/ ?>

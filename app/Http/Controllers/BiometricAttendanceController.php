@@ -18,14 +18,16 @@ class BiometricAttendanceController extends Controller
         $company_setting = Utility::settings();
         $api_urls = !empty($company_setting['zkteco_api_url']) ? $company_setting['zkteco_api_url'] : '';
         $token = !empty($company_setting['auth_token']) ? $company_setting['auth_token'] : '';
-
+        
+        // var_dump($request->start_date); die();
         if (!empty($request->start_date) && !empty($request->end_date)) {
-            $start_date = date('Y-m-d:H:i:s', strtotime($request->start_date));
-            $end_date = date('Y-m-d:H:i:s', strtotime($request->end_date) + 86400 - 1);
+            $start_date = date('Y-m-d H:i:s', strtotime($request->start_date));
+            $end_date = date('Y-m-d H:i:s', strtotime($request->end_date) + 86400 - 1);
         } else {
-            $start_date = date('Y-m-d', strtotime('-7 days'));
-            $end_date = date('Y-m-d');
+            $start_date = date('Y-m-d H:i:s', strtotime('-7 days'));
+            $end_date = date('Y-m-d H:i:s');
         }
+     
         $api_url = rtrim($api_urls, '/');
 
         // Construir la URL de la API con los parámetros
@@ -34,7 +36,7 @@ class BiometricAttendanceController extends Controller
             'end_time' => $end_date,
             'page_size' => 10000,
         ]);
- 
+       
         $curl = curl_init();
         if (!empty($token)) {
             try {
@@ -55,11 +57,11 @@ class BiometricAttendanceController extends Controller
 
                 $response = curl_exec($curl);
                 curl_close($curl);
-
+                // var_dump($response); die();
                 // Decodificar la respuesta de la API
                 $json_attendance = json_decode($response, true);
                 $attendances = $json_attendance['data'];
-
+                //var_dump($attendances); die();
                 // Agregar el nombre del empleado a cada registro de asistencia
                 foreach ($attendances as &$attendance) {
                     $employee = Employee::where('biometric_emp_id', $attendance['emp_code'])->first();
@@ -72,7 +74,7 @@ class BiometricAttendanceController extends Controller
         } else {
             $attendances = [];
         }
-
+        
         return view('biometricattendance.index', compact('attendances', 'token'));
     } else {
         return redirect()->back()->with('error', __('Permission denied.'));
@@ -216,6 +218,7 @@ class BiometricAttendanceController extends Controller
             if (empty($checkDb)) {
                 $employeeAttendance              = new AttendanceEmployee();
                 $employeeAttendance->employee_id = $employee->id;
+                 $employeeAttendance->employee_name = $employee->name;
                 $employeeAttendance->date          = $date;
                 $employeeAttendance->status        = 'Present';
                 $employeeAttendance->clock_in      = $time;
@@ -241,6 +244,7 @@ class BiometricAttendanceController extends Controller
             if (empty($attendance)) {
                 $employeeAttendance              = new AttendanceEmployee();
                 $employeeAttendance->employee_id = $employee->id;
+                $employeeAttendance->employee_name = $employee->name;
                 $employeeAttendance->date          = $date;
                 $employeeAttendance->status        = 'Present';
                 $employeeAttendance->clock_in      = $time;
@@ -261,14 +265,15 @@ class BiometricAttendanceController extends Controller
 
     public function AllSync(Request $request)
     {
+       
         if (Auth::user()->can('Manage Biometric Attendance')) {
             $company_setting = Utility::settings();
             $api_urls = !empty($company_setting['zkteco_api_url']) ? $company_setting['zkteco_api_url'] : '';
             $token = !empty($company_setting['auth_token']) ? $company_setting['auth_token'] : '';
 
             if (!empty($request->start_date) && !empty($request->end_date)) {
-                $start_date = date('Y-m-d:H:i:s', strtotime($request->start_date));
-                $end_date = date('Y-m-d:H:i:s', strtotime($request->end_date) + 86400 - 1);
+                $start_date = date('Y-m-d H:i:s', strtotime($request->start_date));
+                $end_date = date('Y-m-d H:i:s', strtotime($request->end_date) + 86400 - 1);
             } else {
                 $start_date = date('Y-m-d', strtotime('-7 days'));
                 $end_date = date('Y-m-d');
@@ -300,10 +305,10 @@ class BiometricAttendanceController extends Controller
             $response = curl_exec($curl);
 
             curl_close($curl);
-
+            
             $json_attendance = json_decode($response, true);
             $attendances = $json_attendance['data'];
-
+            
             if (empty($company_setting['auth_token'])) {
                 return redirect()->back()->with('error', __('Please first create auth token'));
             }
@@ -403,6 +408,7 @@ class BiometricAttendanceController extends Controller
 
                     $employeeAttendance              = new AttendanceEmployee();
                     $employeeAttendance->employee_id = $employee->id;
+                    $employeeAttendance->employee_name = $employee->name;
                     $employeeAttendance->date          = $date;
                     $employeeAttendance->status        = 'Present';
                     $employeeAttendance->clock_in      = $time;

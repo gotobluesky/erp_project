@@ -43,12 +43,15 @@ class EmployeeController extends Controller
     {
 
         if (\Auth::user()->can('Manage Employee')) {
+            
             if (Auth::user()->type == 'employee') {
+               
                 $employees = Employee::where('user_id', '=', Auth::user()->id)->get();
             } else {
+                
                 $employees = Employee::where('created_by', \Auth::user()->creatorId())->with(['branch', 'department', 'designation'])->get();
             }
-
+           
             return view('employee.index', compact('employees'));
         } else {
             return redirect()->back()->with('error', __('Permission denied.'));
@@ -88,6 +91,7 @@ class EmployeeController extends Controller
                 'password' => 'required',
                 'branch_id' => 'required',
                 'department_id' => 'required',
+                'subdepartment_id' => 'required',
                 'designation_id' => 'required',
                 'document.*' => 'required',
             ];
@@ -167,6 +171,7 @@ class EmployeeController extends Controller
                     'biometric_emp_id' => !empty($request['biometric_emp_id']) ? $request['biometric_emp_id'] : '',
                     'branch_id' => $request['branch_id'],
                     'department_id' => $request['department_id'],
+                    'subdepartment_id' => $request['subdepartment_id'],
                     'designation_id' => $request['designation_id'],
                     'company_doj' => $request['company_doj'],
                     'documents' => $document_implode,
@@ -403,8 +408,8 @@ class EmployeeController extends Controller
 
     // public function json(Request $request)
     // {
-    //     $designations = Designation::where('department_id', $request->department_id)->get()->pluck('name', 'id')->toArray();
-
+    //     $designations = Designation::where('subdepartment_id', $request->subdepartment_id)->pluck('name', 'id')->toArray();
+    //     dd($designations);
     //     return response()->json($designations);
     // }
 
@@ -824,11 +829,9 @@ class EmployeeController extends Controller
 
     public function json(Request $request)
     {
-        if ($request->department_id == 0) {
-            $designations = Designation::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id')->toArray();
-        }
-        $designations = Designation::where('department_id', $request->department_id)->get()->pluck('name', 'id')->toArray();
-
+       
+        $designations = Designation::where('subdepartment_id', $request->subdepartment_id)->pluck('name', 'id')->toArray();
+       
         return response()->json($designations);
     }
 }

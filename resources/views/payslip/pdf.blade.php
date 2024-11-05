@@ -36,7 +36,7 @@
                                         <strong>{{ __('Name') }} :</strong> {{ $employee->name }}<br>
                                         <strong>{{ __('Position') }} :</strong> {{ $employee->designation->name }}<br>
                                         <strong>{{ __('Salary Date') }} :</strong>
-                                        {{ \Auth::user()->dateFormat($payslip->created_at) }}<br>
+                                        {{ \Auth::user()->dateFormat($payslip->start) }} - {{ \Auth::user()->dateFormat($payslip->end) }}<br>
                                     </address>
                                 </div>
                                 <div class="col-md-6 text-end">
@@ -45,7 +45,7 @@
                                         {{ \Utility::getValByName('company_address') }} ,
                                         {{ \Utility::getValByName('company_city') }},<br>
                                         {{ \Utility::getValByName('company_state') }}-{{ \Utility::getValByName('company_zipcode') }}<br>
-                                        <strong>{{ __('Salary Slip') }} :</strong> {{ $payslip->salary_month }}<br>
+                                        <strong>{{ __('Salary Slip') }} :</strong> <br>
                                     </address>
                                 </div>
                             </div>
@@ -56,151 +56,79 @@
                         <div class="col-md-12">
                             <div class="table-responsive">
                                 <table class="table  table-md">
+                                   <table class="table table-striped table-hover table-md">
                                     <tbody>
-                                        @foreach ($payslipDetail['earning']['allowance'] as $allowance)
-                                            @php
-                                                $employess = \App\Models\Employee::find($allowance->employee_id);
-                                                $allowance = json_decode($allowance->allowance);
-                                            @endphp
-                                            @foreach ($allowance as $all)
-                                                <tr>
-                                                    <td>{{ __('Allowance') }}</td>
-                                                    <td>{{ $all->title }}</td>
-                                                    <td>{{ ucfirst($all->type) }}</td>
-                                                    @if ($all->type != 'percentage')
-                                                        <td class="text-right">
-                                                            {{ \Auth::user()->priceFormat($all->amount) }}</td>
-                                                    @else
-                                                        <td class="text-right">{{ $all->amount }}%
-                                                            ({{ \Auth::user()->priceFormat(($all->amount * $payslip->basic_salary) / 100) }})
-                                                        </td>
-                                                    @endif
-                                                </tr>
-                                            @endforeach
-                                        @endforeach
+                                        <tr class="font-weight-bold">
+                                             <tr class="font-weight-bold">
+                                            <th>{{ __('Earning') }}</th>
+                                            <th>{{ __('Title') }}</th>
+                                            <th>{{ __('type') }}</th>
+                                            <th>{{ __('Amount') }}</th>
+                                        </tr>
 
-                                        @foreach ($payslipDetail['earning']['commission'] as $commission)
-                                            @php
-                                                $employess = \App\Models\Employee::find($commission->employee_id);
-                                                $commissions = json_decode($commission->commission);
-                                            @endphp
-                                            @foreach ($commissions as $empcom)
-                                                <tr>
-                                                    <td>{{ __('Commission') }}</td>
-                                                    <td>{{ $empcom->title }}</td>
-                                                    <td>{{ ucfirst($empcom->type) }}</td>
-                                                    @if ($empcom->type != 'percentage')
-                                                        <td class="text-right">
-                                                            {{ \Auth::user()->priceFormat($empcom->amount) }}</td>
-                                                    @else
-                                                        <td class="text-right">{{ $empcom->amount }}%
-                                                            ({{ \Auth::user()->priceFormat(($empcom->amount * $payslip->basic_salary) / 100) }})
-                                                        </td>
-                                                    @endif
-                                                </tr>
-                                            @endforeach
-                                        @endforeach
+                                        
+                                        </tr>
 
-                                        @foreach ($payslipDetail['earning']['otherPayment'] as $otherPayment)
-                                            @php
-                                                $employess = \App\Models\Employee::find($otherPayment->employee_id);
-                                                $otherpay = json_decode($otherPayment->other_payment);
-                                            @endphp
-                                            @foreach ($otherpay as $op)
+                                    
                                                 <tr>
-                                                    <td>{{ __('Other Payment') }}</td>
-                                                    <td>{{ $op->title }}</td>
-                                                    <td>{{ ucfirst($op->type) }}</td>
-                                                    @if ($op->type != 'percentage')
-                                                        <td class="text-right">
-                                                            {{ \Auth::user()->priceFormat($op->amount) }}</td>
-                                                    @else
-                                                        <td class="text-right">{{ $op->amount }}%
-                                                            ({{ \Auth::user()->priceFormat(($op->amount * $payslip->basic_salary) / 100) }})
-                                                        </td>
-                                                    @endif
-                                                </tr>
-                                            @endforeach
-                                        @endforeach
-
-                                        @foreach ($payslipDetail['earning']['overTime'] as $overTime)
-                                            @php
-                                                $arrayJson = json_decode($overTime->overtime);
-                                                foreach ($arrayJson as $key => $overtime) {
-                                                    foreach ($arrayJson as $key => $overtimes) {
-                                                        $overtitle = $overtimes->title;
-                                                        $OverTime = $overtimes->number_of_days * $overtimes->hours * $overtimes->rate;
-                                                    }
-                                                }
-                                            @endphp
-                                            @foreach ($arrayJson as $overtime)
-                                                <tr>
-                                                    <td>{{ __('OverTime') }}</td>
-                                                    <td>{{ $overtime->title }}</td>
+                                                    <td>Net Salary</td>
                                                     <td>-</td>
-                                                    <td class="text-right">
-                                                        {{ \Auth::user()->priceFormat($overtime->number_of_days * $overtime->hours * $overtime->rate) }}
-                                                    </td>
+                                                   <td>-</td>
+                                                   <td>     {{ \Auth::user()->priceFormat($payslip->net_payble) }}</td>
                                                 </tr>
-                                            @endforeach
-                                        @endforeach
+                                                 <tr>
+                                                     <td>Salario Sobre</td>
+                                                    <td>-</td>
+                                                   <td>-</td>
+                                                   <td>     {{ \Auth::user()->priceFormat((($employee->saltots-$employee->salary*7)/7)*$payslip->labor_days) }}</td>
+                                                </tr>
+                                                <tr>
+                                                     <td>Sunday</td>
+                                                    <td>-</td>
+                                                   <td>-</td>
+                                                   <td>     {{ \Auth::user()->priceFormat($payslip->sunday) }}</td>
+                                                </tr>
+                                              
                                     </tbody>
+                                </table>
                                 </table>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover table-md">
-                                    <tbody>
+                              <tbody>
                                         <tr class="font-weight-bold">
+                                             <tr class="font-weight-bold">
                                             <th>{{ __('Deduction') }}</th>
                                             <th>{{ __('Title') }}</th>
                                             <th>{{ __('type') }}</th>
-                                            <th class="text-right">{{ __('Amount') }}</th>
+                                            <th>{{ __('Amount') }}</th>
                                         </tr>
 
-                                        @foreach ($payslipDetail['deduction']['loan'] as $loan)
-                                            @php
-                                                $employess = \App\Models\Employee::find($loan->employee_id);
-                                                $loans = json_decode($loan->loan);
-                                            @endphp
-                                            @foreach ($loans as $emploanss)
-                                                <tr>
-                                                    <td>{{ __('Loan') }}</td>
-                                                    <td>{{ $emploanss->title }}</td>
-                                                    <td>{{ ucfirst($emploanss->type) }}</td>
-                                                    @if ($emploanss->type != 'percentage')
-                                                        <td class="text-right">
-                                                            {{ \Auth::user()->priceFormat($emploanss->amount) }}</td>
-                                                    @else
-                                                        <td class="text-right">{{ $emploanss->amount }}%
-                                                            ({{ \Auth::user()->priceFormat(($emploanss->amount * $payslip->basic_salary) / 100) }})
-                                                        </td>
-                                                    @endif
-                                                </tr>
-                                            @endforeach
-                                        @endforeach
+                                        
+                                        </tr>
 
-                                        @foreach ($payslipDetail['deduction']['deduction'] as $deduction)
-                                            @php
-                                                $employess = \App\Models\Employee::find($deduction->employee_id);
-                                                $deductions = json_decode($deduction->saturation_deduction);
-                                            @endphp
-                                            @foreach ($deductions as $saturationdeduc)
+                                      <?php $basic_deduction=json_decode($payslip->basic_deduction);?>
                                                 <tr>
-                                                    <td>{{ __('Saturation Deduction') }}</td>
-                                                    <td>{{ $saturationdeduc->title }}</td>
-                                                    <td>{{ ucfirst($saturationdeduc->type) }}</td>
-                                                    @if ($saturationdeduc->type != 'percentage')
-                                                        <td class="text-right">
-                                                            {{ \Auth::user()->priceFormat($saturationdeduc->amount) }}
-                                                        </td>
-                                                    @else
-                                                        <td class="text-right">{{ $saturationdeduc->amount }}%
-                                                            ({{ \Auth::user()->priceFormat(($saturationdeduc->amount * $payslip->basic_salary) / 100) }})
-                                                        </td>
-                                                    @endif
+                                                    <td>IMSS</td>
+                                                    <td>-</td>
+                                                   <td>-</td>
+                                                   <td>{{number_format($basic_deduction->imss,4) }}</td>
                                                 </tr>
-                                            @endforeach
-                                        @endforeach
+                                                 <tr>
+                                                     <td>ISR</td>
+                                                    <td>-</td>
+                                                   <td>-</td>
+                                                   <td>{{number_format($basic_deduction->isr, 4) }}</td>
+                                                </tr>
+                                                 <tr>
+                                                     <td>SUBSIDIO</td>
+                                                    <td>-</td>
+                                                   <td>-</td>
+                                                   <td>{{number_format($basic_deduction->subsidio, 2) }}</td>
+                                                </tr>
+                                           
+                                               
+                                           
                                     </tbody>
                                 </table>
                             </div>
@@ -214,19 +142,19 @@
                                         <div class="invoice-detail-name font-weight-bold">{{ __('Total Earning') }}
                                         </div>
                                         <div class="invoice-detail-value">
-                                            {{ \Auth::user()->priceFormat($employee['saltots']) }}</div>
+                                            {{ \Auth::user()->priceFormat((($employee->saltots-$payslip->salary*7)/7)*$payslip->labor_days+$payslip->sunday) }}</div>
                                     </div>
                                     <div class="invoice-detail-item">
                                         <div class="invoice-detail-name font-weight-bold">{{ __('Total Deduction') }}
                                         </div>
                                         <div class="invoice-detail-value">
-                                            {{ \Auth::user()->priceFormat($result['totalDeduction']) }}</div>
+                                            {{ \Auth::user()->priceFormat($basic_deduction->imss+$basic_deduction->isr-$basic_deduction->subsidio) }}</div>
                                     </div>
                                     <hr class="mt-2 mb-2">
                                     <div class="invoice-detail-item">
                                         <div class="invoice-detail-name font-weight-bold">{{ __('Net Salary') }}</div>
                                         <div class="invoice-detail-value invoice-detail-value-lg">
-                                            {{ \Auth::user()->priceFormat($result['totalsalary']) }}</div>
+                                            {{ \Auth::user()->priceFormat((($employee->saltots-$payslip->salary*7)/7)*$payslip->labor_days-$basic_deduction->imss+$basic_deduction->isr-$basic_deduction->subsidio) }}</div>
                                     </div>
                                 </div>
                             </div>

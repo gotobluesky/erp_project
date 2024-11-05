@@ -1,3 +1,5 @@
+
+
 <?php $__env->startSection('page-title'); ?>
    <?php echo e(__('Manage Employee Salary')); ?>
 
@@ -39,7 +41,7 @@
                                     <td><?php echo e($employee->name); ?></td>
                                     <td><?php echo e($employee->salary_type()); ?></td>
                                     <td><?php echo e(\Auth::user()->priceFormat($employee->salary)); ?></td>
-                                    <td><?php echo e(!empty($employee->get_net_salary()) ? \Auth::user()->priceFormat($employee->get_net_salary()) : ''); ?>
+                                    <td><?php echo e(!empty($employee->salary) ? \Auth::user()->priceFormat($employee->salary*7) : ''); ?>
 
                                     </td>
                                     <td class="Action">

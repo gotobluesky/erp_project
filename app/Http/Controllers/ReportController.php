@@ -814,9 +814,9 @@ class ReportController extends Controller
     public function getdepartment(Request $request)
     {
         if ($request->branch_id == 0) {
-            $departments = Department::where('created_by', '=', \Auth::user()->creatorId())->get()->pluck('name', 'id')->toArray();
+            $departments = Department::where('created_by', '=', \Auth::user()->creatorId())->get()->toArray();
         } else {
-            $departments = Department::where('created_by', '=', \Auth::user()->creatorId())->where('branch_id', $request->branch_id)->get()->pluck('name', 'id')->toArray();
+            $departments = Department::where('created_by', '=', \Auth::user()->creatorId())->where('branch_id', $request->branch_id)->get()->toArray();
         }
         return response()->json($departments);
     }

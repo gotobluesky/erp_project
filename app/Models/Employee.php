@@ -135,9 +135,10 @@ class Employee extends Model
 
         // $net_salary     = (!empty($employee->salary) ? $employee->salary : 0) + $advance_salary;
         $labor=new AttendanceEmployee();
-        $result=$labor->calculateworkingtime( $employee->id, $start, $end);
-        $net_salary = $employee->salary *  $result["labor"];
+        $result=$labor->calculateworkingtime($employee->id, $start, $end);
         
+        $net_salary = $employee->salary *  $result["labor"];
+        // var_dump($employee->id);
 
         return $net_salary;
     }
@@ -217,26 +218,29 @@ class Employee extends Model
         $result= $labor->calculateworkingtime( $employee->id, $start, $end);
         
         $importe = $diferencia * $result["Asistidos"];
-        $excedentepatro = 0.4;
+        $excedentepatro = 0.0040;
         $cuotacorre = $importe * $excedentepatro;
-        $excedentpatron = 0.40 * $excedentepatro;
+        $excedentpatron = 0.0040 * $excedentepatro;
 
-        $prestaciodiner = 0.25 * ($SDI * $result["labor"]);
-        $prestacioespec = 0.375 * ($SDI *$result["labor"]);
-        $invalidday = 0.625 * ($SDI * $result["labor"]);
-        $guarderyprestasoc = 1.125 * ($SDI * $result["labor"]);
-
+        $prestaciodiner = 0.0025 * ($SDI * $result["labor"]);
+        $prestacioespec = 0.00375 * ($SDI *$result["labor"]);
+        $invalidday = 0.00625 * ($SDI * $result["labor"]);
+        $guarderyprestasoc = 0.01125 * ($SDI * $result["labor"]);
         $totalimss = ($excedentpatron +  $prestaciodiner +  $prestacioespec +  $invalidday + $guarderyprestasoc);
-       
- 
-        $baseValueIsr = Isr2024Weekly::where('limif', '<=', $employee->salary* $result["labor"])
+        if($employee->salary* $result["labor"]==0){
+             $baseValueIsr = Isr2024Weekly::where('limif', '=', $employee->salary* $result["labor"])
+                                    ->get();
+        } else{
+            $baseValueIsr = Isr2024Weekly::where('limif', '<', $employee->salary* $result["labor"])
                                     ->where('limsu', '>=', $employee->salary* $result["labor"])
                                     ->get();
-                                  
-        $Isr = floatval($baseValueIsr[0]->cuota) + ((floatval($employee->saltots)-floatval($baseValueIsr[0]->limif))*floatval($baseValueIsr[0]->porcen));
+        }
         
+                               
+        $Isr = floatval($baseValueIsr[0]->cuota) + ((floatval($employee->salary * $result["labor"])-floatval($baseValueIsr[0]->limif))*floatval($baseValueIsr[0]->porcen));
+       
         if (floatval($employee->salary)*$result["labor"]<2271){
-            $subsidio =89.00;
+            $subsidio =89.84;
         }else{
             $subsidio =0;
         }

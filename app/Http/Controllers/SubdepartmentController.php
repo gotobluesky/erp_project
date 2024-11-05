@@ -2,18 +2,23 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Subdepartment;
+use App\Models\Branch;
 use App\Models\Department;
+use App\Models\Subdepartment;
 use Illuminate\Http\Request;
 
 class SubdepartmentController extends Controller
 {
     public function index()
     {
+       
+         
+     
         if(\Auth::user()->can('Manage Subdepartment'))
         {
-            $subdepartments = Subdepartment::where('created_by', '=', \Auth::user()->creatorId())->with('department')->get();
-
+            
+            $subdepartments = Subdepartment::where('created_by', '=', \Auth::user()->creatorId())->get();
+            
             return view('subdepartment.index', compact('subdepartments'));
         }
         else
@@ -26,9 +31,8 @@ class SubdepartmentController extends Controller
     {
         if(\Auth::user()->can('Create Subdepartment'))
         {
-            $departments = Department::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
-
-            return view('subdepartment.create', compact('departments'));
+            $branches = Branch::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
+            return view('subdepartment.create', compact('branches'));
         }
         else
         {
@@ -38,14 +42,19 @@ class SubdepartmentController extends Controller
 
     public function store(Request $request)
     {
+        
+       
         if(\Auth::user()->can('Create Subdepartment'))
         {
-
+            
             $validator = \Validator::make(
-                $request->all(), [
-                                   'department_id' => 'required',
-                                   'name' => 'required|max:20',
-                               ]
+                $request->all(), 
+                [
+                    'branch_id' =>'required',
+                    'department_id' => 'required',
+                       
+                    'name' => 'required|max:20',
+                ]
             );
             if($validator->fails())
             {
@@ -55,6 +64,7 @@ class SubdepartmentController extends Controller
             }
 
             $subdepartment             = new Subdepartment();
+            $subdepartment->branch_id = $request->branch_id;
             $subdepartment->department_id  = $request->department_id;
             $subdepartment->name       = $request->name;
             $subdepartment->created_by = \Auth::user()->creatorId();
@@ -70,13 +80,18 @@ class SubdepartmentController extends Controller
 
     public function edit(Subdepartment $subdepartment)
     {
+       
         if(\Auth::user()->can('Edit Subdepartment'))
         {
             if($subdepartment->created_by == \Auth::user()->creatorId())
+            
             {
-                $departments = Department::where('created_by', \Auth::user()->creatorId())->get()->pluck('name', 'id');
-
-                return view('subdepartment.edit', compact('subdepartment', 'departments'));
+               
+                $branch = Branch::where('created_by', \Auth::user()->creatorId())->where('id', $subdepartment->branch_id)->get()->pluck('name', 'id');
+                $department = Department::where('created_by', \Auth::user()->creatorId())->where('id', $subdepartment->department_id)->get()->pluck('name', 'id');
+               
+                return view('subdepartment.edit', compact('subdepartment', 'department', 'branch'));
+             
             }
             else
             {
@@ -108,7 +123,6 @@ class SubdepartmentController extends Controller
                     return redirect()->back()->with('error', $messages->first());
                 }
 
-                $subdepartment->department_id = $request->department_id;
                 $subdepartment->name      = $request->name;
                 $subdepartment->save();
 
@@ -144,5 +158,11 @@ class SubdepartmentController extends Controller
         {
             return redirect()->back()->with('error', __('Permission denied.'));
         }
+    }
+    
+    public function json(Request $request){
+        $subdepartments = Subdepartment::where('department_id', $request->department_id)->get()->pluck('name', 'id')->toArray();
+
+       return response()->json($subdepartments);
     }
 }

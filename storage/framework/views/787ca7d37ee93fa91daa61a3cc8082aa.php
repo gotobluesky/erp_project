@@ -36,7 +36,7 @@
                                         <strong><?php echo e(__('Name')); ?> :</strong> <?php echo e($employee->name); ?><br>
                                         <strong><?php echo e(__('Position')); ?> :</strong> <?php echo e($employee->designation->name); ?><br>
                                         <strong><?php echo e(__('Salary Date')); ?> :</strong>
-                                        <?php echo e(\Auth::user()->dateFormat($payslip->created_at)); ?><br>
+                                        <?php echo e(\Auth::user()->dateFormat($payslip->start)); ?> - <?php echo e(\Auth::user()->dateFormat($payslip->end)); ?><br>
                                     </address>
                                 </div>
                                 <div class="col-md-6 text-end">
@@ -45,7 +45,7 @@
                                         <?php echo e(\Utility::getValByName('company_address')); ?> ,
                                         <?php echo e(\Utility::getValByName('company_city')); ?>,<br>
                                         <?php echo e(\Utility::getValByName('company_state')); ?>-<?php echo e(\Utility::getValByName('company_zipcode')); ?><br>
-                                        <strong><?php echo e(__('Salary Slip')); ?> :</strong> <?php echo e($payslip->salary_month); ?><br>
+                                        <strong><?php echo e(__('Salary Slip')); ?> :</strong> <br>
                                     </address>
                                 </div>
                             </div>
@@ -56,167 +56,79 @@
                         <div class="col-md-12">
                             <div class="table-responsive">
                                 <table class="table  table-md">
+                                   <table class="table table-striped table-hover table-md">
                                     <tbody>
                                         <tr class="font-weight-bold">
+                                             <tr class="font-weight-bold">
                                             <th><?php echo e(__('Earning')); ?></th>
                                             <th><?php echo e(__('Title')); ?></th>
-                                            <th><?php echo e(__('Type')); ?></th>
-                                            <th class="text-right"><?php echo e(__('Amount')); ?></th>
-                                        </tr>
-                                        <tr>
-                                            <td><?php echo e(__('Basic Salary')); ?></td>
-                                            <td>-</td>
-                                            <td>-</td>
-                                            <td class="text-right">
-                                                <?php echo e(\Auth::user()->priceFormat($payslip->basic_salary)); ?></td>
+                                            <th><?php echo e(__('type')); ?></th>
+                                            <th><?php echo e(__('Amount')); ?></th>
                                         </tr>
 
-                                        <?php $__currentLoopData = $payslipDetail['earning']['allowance']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $allowance): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <?php
-                                                $employess = \App\Models\Employee::find($allowance->employee_id);
-                                                $allowance = json_decode($allowance->allowance);
-                                            ?>
-                                            <?php $__currentLoopData = $allowance; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $all): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <tr>
-                                                    <td><?php echo e(__('Allowance')); ?></td>
-                                                    <td><?php echo e($all->title); ?></td>
-                                                    <td><?php echo e(ucfirst($all->type)); ?></td>
-                                                    <?php if($all->type != 'percentage'): ?>
-                                                        <td class="text-right">
-                                                            <?php echo e(\Auth::user()->priceFormat($all->amount)); ?></td>
-                                                    <?php else: ?>
-                                                        <td class="text-right"><?php echo e($all->amount); ?>%
-                                                            (<?php echo e(\Auth::user()->priceFormat(($all->amount * $payslip->basic_salary) / 100)); ?>)
-                                                        </td>
-                                                    <?php endif; ?>
-                                                </tr>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        
+                                        </tr>
 
-                                        <?php $__currentLoopData = $payslipDetail['earning']['commission']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $commission): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <?php
-                                                $employess = \App\Models\Employee::find($commission->employee_id);
-                                                $commissions = json_decode($commission->commission);
-                                            ?>
-                                            <?php $__currentLoopData = $commissions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $empcom): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                    
                                                 <tr>
-                                                    <td><?php echo e(__('Commission')); ?></td>
-                                                    <td><?php echo e($empcom->title); ?></td>
-                                                    <td><?php echo e(ucfirst($empcom->type)); ?></td>
-                                                    <?php if($empcom->type != 'percentage'): ?>
-                                                        <td class="text-right">
-                                                            <?php echo e(\Auth::user()->priceFormat($empcom->amount)); ?></td>
-                                                    <?php else: ?>
-                                                        <td class="text-right"><?php echo e($empcom->amount); ?>%
-                                                            (<?php echo e(\Auth::user()->priceFormat(($empcom->amount * $payslip->basic_salary) / 100)); ?>)
-                                                        </td>
-                                                    <?php endif; ?>
-                                                </tr>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-                                        <?php $__currentLoopData = $payslipDetail['earning']['otherPayment']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $otherPayment): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <?php
-                                                $employess = \App\Models\Employee::find($otherPayment->employee_id);
-                                                $otherpay = json_decode($otherPayment->other_payment);
-                                            ?>
-                                            <?php $__currentLoopData = $otherpay; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $op): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <tr>
-                                                    <td><?php echo e(__('Other Payment')); ?></td>
-                                                    <td><?php echo e($op->title); ?></td>
-                                                    <td><?php echo e(ucfirst($op->type)); ?></td>
-                                                    <?php if($op->type != 'percentage'): ?>
-                                                        <td class="text-right">
-                                                            <?php echo e(\Auth::user()->priceFormat($op->amount)); ?></td>
-                                                    <?php else: ?>
-                                                        <td class="text-right"><?php echo e($op->amount); ?>%
-                                                            (<?php echo e(\Auth::user()->priceFormat(($op->amount * $payslip->basic_salary) / 100)); ?>)
-                                                        </td>
-                                                    <?php endif; ?>
-                                                </tr>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-
-                                        <?php $__currentLoopData = $payslipDetail['earning']['overTime']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $overTime): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <?php
-                                                $arrayJson = json_decode($overTime->overtime);
-                                                foreach ($arrayJson as $key => $overtime) {
-                                                    foreach ($arrayJson as $key => $overtimes) {
-                                                        $overtitle = $overtimes->title;
-                                                        $OverTime = $overtimes->number_of_days * $overtimes->hours * $overtimes->rate;
-                                                    }
-                                                }
-                                            ?>
-                                            <?php $__currentLoopData = $arrayJson; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $overtime): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <tr>
-                                                    <td><?php echo e(__('OverTime')); ?></td>
-                                                    <td><?php echo e($overtime->title); ?></td>
+                                                    <td>Net Salary</td>
                                                     <td>-</td>
-                                                    <td class="text-right">
-                                                        <?php echo e(\Auth::user()->priceFormat($overtime->number_of_days * $overtime->hours * $overtime->rate)); ?>
-
-                                                    </td>
+                                                   <td>-</td>
+                                                   <td>     <?php echo e(\Auth::user()->priceFormat($payslip->net_payble)); ?></td>
                                                 </tr>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                 <tr>
+                                                     <td>Salario Sobre</td>
+                                                    <td>-</td>
+                                                   <td>-</td>
+                                                   <td>     <?php echo e(\Auth::user()->priceFormat((($employee->saltots-$employee->salary*7)/7)*$payslip->labor_days)); ?></td>
+                                                </tr>
+                                                <tr>
+                                                     <td>Sunday</td>
+                                                    <td>-</td>
+                                                   <td>-</td>
+                                                   <td>     <?php echo e(\Auth::user()->priceFormat($payslip->sunday)); ?></td>
+                                                </tr>
+                                              
                                     </tbody>
+                                </table>
                                 </table>
                             </div>
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover table-md">
-                                    <tbody>
+                              <tbody>
                                         <tr class="font-weight-bold">
+                                             <tr class="font-weight-bold">
                                             <th><?php echo e(__('Deduction')); ?></th>
                                             <th><?php echo e(__('Title')); ?></th>
                                             <th><?php echo e(__('type')); ?></th>
-                                            <th class="text-right"><?php echo e(__('Amount')); ?></th>
+                                            <th><?php echo e(__('Amount')); ?></th>
                                         </tr>
 
-                                        <?php $__currentLoopData = $payslipDetail['deduction']['loan']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $loan): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <?php
-                                                $employess = \App\Models\Employee::find($loan->employee_id);
-                                                $loans = json_decode($loan->loan);
-                                            ?>
-                                            <?php $__currentLoopData = $loans; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $emploanss): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                                <tr>
-                                                    <td><?php echo e(__('Loan')); ?></td>
-                                                    <td><?php echo e($emploanss->title); ?></td>
-                                                    <td><?php echo e(ucfirst($emploanss->type)); ?></td>
-                                                    <?php if($emploanss->type != 'percentage'): ?>
-                                                        <td class="text-right">
-                                                            <?php echo e(\Auth::user()->priceFormat($emploanss->amount)); ?></td>
-                                                    <?php else: ?>
-                                                        <td class="text-right"><?php echo e($emploanss->amount); ?>%
-                                                            (<?php echo e(\Auth::user()->priceFormat(($emploanss->amount * $payslip->basic_salary) / 100)); ?>)
-                                                        </td>
-                                                    <?php endif; ?>
-                                                </tr>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                        
+                                        </tr>
 
-                                        <?php $__currentLoopData = $payslipDetail['deduction']['deduction']; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $deduction): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
-                                            <?php
-                                                $employess = \App\Models\Employee::find($deduction->employee_id);
-                                                $deductions = json_decode($deduction->saturation_deduction);
-                                            ?>
-                                            <?php $__currentLoopData = $deductions; $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $saturationdeduc): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                                      <?php $basic_deduction=json_decode($payslip->basic_deduction);?>
                                                 <tr>
-                                                    <td><?php echo e(__('Saturation Deduction')); ?></td>
-                                                    <td><?php echo e($saturationdeduc->title); ?></td>
-                                                    <td><?php echo e(ucfirst($saturationdeduc->type)); ?></td>
-                                                    <?php if($saturationdeduc->type != 'percentage'): ?>
-                                                        <td class="text-right">
-                                                            <?php echo e(\Auth::user()->priceFormat($saturationdeduc->amount)); ?>
-
-                                                        </td>
-                                                    <?php else: ?>
-                                                        <td class="text-right"><?php echo e($saturationdeduc->amount); ?>%
-                                                            (<?php echo e(\Auth::user()->priceFormat(($saturationdeduc->amount * $payslip->basic_salary) / 100)); ?>)
-                                                        </td>
-                                                    <?php endif; ?>
+                                                    <td>IMSS</td>
+                                                    <td>-</td>
+                                                   <td>-</td>
+                                                   <td><?php echo e(number_format($basic_deduction->imss,4)); ?></td>
                                                 </tr>
-                                            <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
-                                        <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                                                 <tr>
+                                                     <td>ISR</td>
+                                                    <td>-</td>
+                                                   <td>-</td>
+                                                   <td><?php echo e(number_format($basic_deduction->isr, 4)); ?></td>
+                                                </tr>
+                                                 <tr>
+                                                     <td>SUBSIDIO</td>
+                                                    <td>-</td>
+                                                   <td>-</td>
+                                                   <td><?php echo e(number_format($basic_deduction->subsidio, 2)); ?></td>
+                                                </tr>
+                                           
+                                               
+                                           
                                     </tbody>
                                 </table>
                             </div>
@@ -231,20 +143,20 @@
 
                                         </div>
                                         <div class="invoice-detail-value">
-                                            <?php echo e(\Auth::user()->priceFormat($payslipDetail['totalEarning'])); ?></div>
+                                            <?php echo e(\Auth::user()->priceFormat((($employee->saltots-$payslip->salary*7)/7)*$payslip->labor_days+$payslip->sunday)); ?></div>
                                     </div>
                                     <div class="invoice-detail-item">
                                         <div class="invoice-detail-name font-weight-bold"><?php echo e(__('Total Deduction')); ?>
 
                                         </div>
                                         <div class="invoice-detail-value">
-                                            <?php echo e(\Auth::user()->priceFormat($payslipDetail['totalDeduction'])); ?></div>
+                                            <?php echo e(\Auth::user()->priceFormat($basic_deduction->imss+$basic_deduction->isr-$basic_deduction->subsidio)); ?></div>
                                     </div>
                                     <hr class="mt-2 mb-2">
                                     <div class="invoice-detail-item">
                                         <div class="invoice-detail-name font-weight-bold"><?php echo e(__('Net Salary')); ?></div>
                                         <div class="invoice-detail-value invoice-detail-value-lg">
-                                            <?php echo e(\Auth::user()->priceFormat($payslip->net_payble)); ?></div>
+                                            <?php echo e(\Auth::user()->priceFormat((($employee->saltots-$payslip->salary*7)/7)*$payslip->labor_days-$basic_deduction->imss+$basic_deduction->isr-$basic_deduction->subsidio)); ?></div>
                                     </div>
                                 </div>
                             </div>

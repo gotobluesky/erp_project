@@ -9,9 +9,14 @@
 
         </div>
         <div class="form-group  ">
-            <?php echo e(Form::label('salary', __('Salary'), ['class' => 'col-form-label'])); ?>
+            <?php echo e(Form::label('salary', __('Salario diario'), ['class' => 'col-form-label'])); ?>
 
             <?php echo e(Form::number('salary', null, ['class' => 'form-control ', 'required' => 'required'])); ?>
+
+        </div> <div class="form-group  ">
+            <?php echo e(Form::label('saltots', __('Salario Total'), ['class' => 'col-form-label'])); ?>
+
+            <?php echo e(Form::number('saltots', null, ['class' => 'form-control ', 'required' => 'required'])); ?>
 
         </div>
         <div class="form-group">

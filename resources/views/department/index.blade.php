@@ -36,7 +36,7 @@
                             <tr>
                                 <th>{{ __('Branch') }}</th>
                                 <th>{{ __('Department') }}</th>
-                                <th>{{ __('SubDepartment') }}</th>
+                               
                                 <th width="200px">{{ __('Action') }}</th>
                             </tr>
                         </thead>
@@ -45,7 +45,7 @@
                                 <tr>
                                     <td>{{ !empty($department->branch) ? $department->branch->name : '' }}</td>
                                     <td>{{ $department->name }}</td>
-                                    <td>{{ $department->subdepartment }}</td>
+                                    
 
                                     <td class="Action">
                                         <span>

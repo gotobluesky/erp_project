@@ -183,6 +183,7 @@ Route::group(['middleware' => ['verified']], function () {
     Route::resource('user', UserController::class)->middleware(['auth', 'XSS']);
     
     Route::post('employee/json', [EmployeeController::class, 'json'])->name('employee.json')->middleware(['auth', 'XSS']);
+   
     Route::post('employee/getdepartment', [EmployeeController::class, 'getdepartment'])->name('employee.getdepartment')->middleware(['auth', 'XSS']);
     Route::post('branch/employee/json', [EmployeeController::class, 'employeeJson'])->name('branch.employee.json')->middleware(['auth', 'XSS']);
     Route::get('employee-profile', [EmployeeController::class, 'profile'])->name('employee.profile')->middleware(['auth', 'XSS']);
@@ -202,8 +203,8 @@ Route::group(['middleware' => ['verified']], function () {
     Route::resource('department', DepartmentController::class)->middleware(['auth', 'XSS']);
     
     // Ruta para Subdepartamentos
-    Route::resource('subdepartments', SubdepartmentController::class)->middleware(['auth', 'XSS']);
-    
+    Route::resource('subdepartment', SubdepartmentController::class)->middleware(['auth', 'XSS']);
+    Route::post('subdepartment/json', [SubdepartmentController::class, 'json'])->name('subdepartment.json')->middleware(['auth', 'XSS']);
     Route::resource('designation', DesignationController::class)->middleware(['auth', 'XSS']);
     Route::resource('document', DocumentController::class)->middleware(['auth', 'XSS']);
     Route::resource('branch', BranchController::class)->middleware(['auth', 'XSS']);
@@ -259,7 +260,8 @@ Route::group(['middleware' => ['verified']], function () {
     Route::get('salary/employeeSalary', [SetSalaryController::class, 'employeeSalary'])->name('employeesalary')->middleware(['auth', 'XSS']);
     
     Route::resource('setsalary', SetSalaryController::class)->middleware(['auth', 'XSS']);
-
+    
+    Route::get('payslip/paystatus/{id}', [PaySlipController::class, 'paystatus'])->name('payslip.paystatus')->middleware(['auth', 'XSS']);
     Route::get('payslip/paysalary/{id}/{date}', [PaySlipController::class, 'paysalary'])->name('payslip.paysalary')->middleware(['auth', 'XSS']);
     Route::get('payslip/bulk_pay_create/{date}', [PaySlipController::class, 'bulk_pay_create'])->name('payslip.bulk_pay_create')->middleware(['auth', 'XSS']);
     Route::post('payslip/bulkpayment/{date}', [PaySlipController::class, 'bulkpayment'])->name('payslip.bulkpayment')->middleware(['auth', 'XSS']);

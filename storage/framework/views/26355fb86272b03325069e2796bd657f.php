@@ -18,8 +18,8 @@
         <?php endif; ?>
         
         <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Manage Subdepartment')): ?>
-              <a href="<?php echo e(route('subdepartments.index')); ?>"
-                  class="list-group-item list-group-item-action border-0 <?php echo e(request()->is('subdepartments*') ? 'active' : ''); ?>"><?php echo e(__('Subdepartments')); ?>
+              <a href="<?php echo e(route('subdepartment.index')); ?>"
+                  class="list-group-item list-group-item-action border-0 <?php echo e(request()->is('subdepartment*') ? 'active' : ''); ?>"><?php echo e(__('Subdepartment')); ?>
 
                   <div class="float-end"><i class="ti ti-chevron-right"></i></div>
              </a>

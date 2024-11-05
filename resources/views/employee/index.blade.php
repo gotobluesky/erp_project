@@ -65,13 +65,13 @@
                                     <td>{{ $employee->name }}</td>
                                     <td>{{ !empty($employee->email) ? $employee->email : '-' }}</td>
                                     <td>
-                                        {{ !empty($employee->branch_id) ? $employee->branch->name : '-' }}
+                                        {{ !empty($employee->branch->name) ? $employee->branch->name : '-' }}
                                     </td>
                                     <td>
-                                        {{ !empty($employee->department_id) ? $employee->department->name : '-' }}
+                                        {{ !empty($employee->department->name) ? $employee->department->name : '-' }}
                                     </td>
                                     <td>
-                                        {{ !empty($employee->designation_id) ? $employee->designation->name : '-' }}
+                                        {{ !empty($employee->designation->name) ? $employee->designation->name : '-' }}
                                     </td>
                                     <td>
                                         {{ \Auth::user()->dateFormat($employee->company_doj) }}
