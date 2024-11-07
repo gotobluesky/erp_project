@@ -120,7 +120,7 @@ class SetSalaryController extends Controller
         // $end=$currentDate->format('Y-m-d');
         
         if (\Auth::user()->type == 'employee') {
-              var_dump($deduction_options); die();
+             
             $currentEmployee      = Employee::where('user_id', '=', \Auth::user()->id)->first();
             $allowances           = Allowance::where('employee_id', $currentEmployee->id)->get();
             $commissions          = Commission::where('employee_id', $currentEmployee->id)->get();

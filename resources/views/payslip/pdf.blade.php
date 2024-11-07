@@ -71,23 +71,34 @@
 
                                     
                                                 <tr>
-                                                    <td>Net Salary</td>
+                                                    <td>NÓMINA</td>
                                                     <td>-</td>
                                                    <td>-</td>
                                                    <td>     {{ \Auth::user()->priceFormat($payslip->net_payble) }}</td>
                                                 </tr>
                                                  <tr>
-                                                     <td>Salario Sobre</td>
+                                                     <td>COMPLEMENTO</td>
                                                     <td>-</td>
                                                    <td>-</td>
-                                                   <td>     {{ \Auth::user()->priceFormat((($employee->saltots-$employee->salary*7)/7)*$payslip->labor_days) }}</td>
+                                                   <td>     {{ \Auth::user()->priceFormat((($employee->saltots-$payslip->net_payble)/7)*$payslip->labor_days) }}</td>
                                                 </tr>
                                                 <tr>
-                                                     <td>Sunday</td>
+                                                     <td>Prima Dominical</td>
                                                     <td>-</td>
                                                    <td>-</td>
                                                    <td>     {{ \Auth::user()->priceFormat($payslip->sunday) }}</td>
                                                 </tr>
+                                               <?php $other_payment=json_decode($payslip->other_payment);
+                                                //var_dump($json_decode($payslip->saturation_deduction));die();?>
+                                                @foreach ($other_payment as $item)
+                                                <tr>
+                                                        <td>{{$item->title}}</td>
+                                                    <td>-</td>
+                                               <td>{{$item->type}}</td>
+                                                   
+                                                  <td>     {{ \Auth::user()->priceFormat( $item->amount) }}</td>
+                                                </tr>
+                                                @endforeach
                                               
                                     </tbody>
                                 </table>
@@ -112,13 +123,13 @@
                                                     <td>IMSS</td>
                                                     <td>-</td>
                                                    <td>-</td>
-                                                   <td>{{number_format($basic_deduction->imss,4) }}</td>
+                                                   <td>{{number_format($basic_deduction->imss,2) }}</td>
                                                 </tr>
                                                  <tr>
                                                      <td>ISR</td>
                                                     <td>-</td>
                                                    <td>-</td>
-                                                   <td>{{number_format($basic_deduction->isr, 4) }}</td>
+                                                   <td>{{number_format($basic_deduction->isr, 2) }}</td>
                                                 </tr>
                                                  <tr>
                                                      <td>SUBSIDIO</td>
@@ -126,7 +137,17 @@
                                                    <td>-</td>
                                                    <td>{{number_format($basic_deduction->subsidio, 2) }}</td>
                                                 </tr>
-                                           
+                                                 <?php $saturationdeduction=json_decode($payslip->saturation_deduction);
+                                                //var_dump($json_decode($payslip->saturation_deduction));die();?>
+                                                @foreach ($saturationdeduction as $item)
+                                                <tr>
+                                                     <td>{{$item->title}}</td>
+                                                    <td>-</td>
+                                                  <td>{{$item->type}}</td>
+                                                   
+                                                  <td>     {{ \Auth::user()->priceFormat( $item->amount) }}</td>
+                                                </tr>
+                                                @endforeach
                                                
                                            
                                     </tbody>
@@ -139,22 +160,27 @@
                                 </div>
                                 <div class="col-lg-4 text-right text-sm">
                                     <div class="invoice-detail-item pb-2">
-                                        <div class="invoice-detail-name font-weight-bold">{{ __('Total Earning') }}
+                                        <div class="invoice-detail-name font-weight-bold">{{ __('Total Antes de Deducciones') }}
                                         </div>
                                         <div class="invoice-detail-value">
-                                            {{ \Auth::user()->priceFormat((($employee->saltots-$payslip->salary*7)/7)*$payslip->labor_days+$payslip->sunday) }}</div>
+                                            {{ \Auth::user()->priceFormat($payslip->net_payble) }}</div>
                                     </div>
                                     <div class="invoice-detail-item">
-                                        <div class="invoice-detail-name font-weight-bold">{{ __('Total Deduction') }}
+                                        <div class="invoice-detail-name font-weight-bold">{{ __('Total Deducciones') }}
                                         </div>
                                         <div class="invoice-detail-value">
                                             {{ \Auth::user()->priceFormat($basic_deduction->imss+$basic_deduction->isr-$basic_deduction->subsidio) }}</div>
                                     </div>
-                                    <hr class="mt-2 mb-2">
+                                    <div class="invoice-detail-name font-weight-bold">{{ __('Total Despues de Deducciones') }}
+                                        </div>
+                                        <div class="invoice-detail-value">
+                                            {{ \Auth::user()->priceFormat($payslip->net_payble-($basic_deduction->imss+$basic_deduction->isr-$basic_deduction->subsidio)) }}</div>
+                                    </div>
+                                    
                                     <div class="invoice-detail-item">
-                                        <div class="invoice-detail-name font-weight-bold">{{ __('Net Salary') }}</div>
+                                        <div class="invoice-detail-name font-weight-bold">{{ __('Total Mixto') }}</div>
                                         <div class="invoice-detail-value invoice-detail-value-lg">
-                                            {{ \Auth::user()->priceFormat((($employee->saltots-$payslip->salary*7)/7)*$payslip->labor_days-$basic_deduction->imss+$basic_deduction->isr-$basic_deduction->subsidio) }}</div>
+                                            {{ \Auth::user()->priceFormat(($payslip->net_payble)+((($employee->saltots-$payslip->net_payble)/7)*$payslip->labor_days)-$basic_deduction->imss-$basic_deduction->isr-$basic_deduction->subsidio) }}</div>
                                     </div>
                                 </div>
                             </div>

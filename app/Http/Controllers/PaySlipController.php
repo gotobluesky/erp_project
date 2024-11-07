@@ -76,7 +76,7 @@ class PaySlipController extends Controller
         $start = new DateTime($request->start);
         $end = new DateTime($request->end);
         $interval = $start->diff($end);
-        if ($interval->days > 7) {
+        if ($interval->days > 6) {
          
             return redirect()->route('payslip.index')->with('success', __('You have to select range of 7 days.'));
         }
@@ -148,11 +148,11 @@ class PaySlipController extends Controller
                     $payslipEmployee->labor_days           = $result["labor"];
                   
                     if($result['sunday']==1){
-                        $payslipEmployee->sunday           = $employee->saltots /7;
+                        $payslipEmployee->sunday           = $employee->saltots /6*.25;
                     }else{
                         $payslipEmployee->sunday           = 0;
                     }
-                    
+                    $payslipEmployee->saturation_deduction = Employee::saturation_deduction($employee->id);
                     $payslipEmployee->other_payment        = Employee::other_payment($employee->id);
                     $payslipEmployee->overtime             = Employee::overtime($employee->id);
                     $payslipEmployee->created_by           = \Auth::user()->creatorId();
