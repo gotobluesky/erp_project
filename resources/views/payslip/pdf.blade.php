@@ -99,6 +99,14 @@
                                                   <td>     {{ \Auth::user()->priceFormat( $item->amount) }}</td>
                                                 </tr>
                                                 @endforeach
+                                             
+                                                 <tr>
+                                                     <td>Horas Extra</td>
+                                                    <td>-</td>
+                                                   <td>-</td>
+                                                   <td>     {{ \Auth::user()->priceFormat($payslip->overtime) }}</td>
+                                                </tr>
+                                            
                                               
                                     </tbody>
                                 </table>

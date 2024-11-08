@@ -31,7 +31,7 @@ class SetSalaryController extends Controller
                     'created_by' => \Auth::user()->creatorId(),
                 ]
             )->get();
-            // var_dump($employees); die();
+            
             $labor=new AttendanceEmployee();
             $startend=$this->getweek();
             

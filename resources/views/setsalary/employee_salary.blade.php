@@ -522,15 +522,15 @@
                             <div class="col-11">
                                 <h5>{{ __('Overtime') }}</h5>
                             </div>
-                            @can('Create Overtime')
-                                <div class="col-1 text-end">
-                                    <a data-url="{{ route('overtimes.create', $employee->id) }}" data-ajax-popup="true"
-                                        data-title="{{ __('Create Overtime') }}" data-bs-toggle="tooltip" title=""
-                                        class="btn btn-sm btn-primary" data-bs-original-title="{{ __('Create') }}">
-                                        <i class="ti ti-plus"></i>
-                                    </a>
-                                </div>
-                            @endcan
+                            <!--@can('Create Overtime')-->
+                            <!--    <div class="col-1 text-end">-->
+                            <!--        <a data-url="{{ route('overtimes.create', $employee->id) }}" data-ajax-popup="true"-->
+                            <!--            data-title="{{ __('Create Overtime') }}" data-bs-toggle="tooltip" title=""-->
+                            <!--            class="btn btn-sm btn-primary" data-bs-original-title="{{ __('Create') }}">-->
+                            <!--            <i class="ti ti-plus"></i>-->
+                            <!--        </a>-->
+                            <!--    </div>-->
+                            <!--@endcan-->
                         </div>
                     </div>
                     <div class=" card-body table-border-style" style=" overflow:auto">

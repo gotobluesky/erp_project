@@ -43,7 +43,7 @@ class DesignationController extends Controller
                 [
                     'branch_id' => 'required',
                     'department_id' => 'required',
-                    'subdepartment_id'=> 'required',
+                  
                     'name' => 'required|max:20',
                 ]
             );
@@ -62,7 +62,7 @@ class DesignationController extends Controller
             $designation                = new Designation();
             $designation->branch_id     = $branch;
             $designation->department_id = $request->department_id;
-            $designation->subdepartment_id = $request->subdepartment_id;
+            $designation->subdepartment_id =!empty($request->subdepartment_id)?$request->subdepartment_id:null;
             $designation->name          = $request->name;
             $designation->created_by    = \Auth::user()->creatorId();
 

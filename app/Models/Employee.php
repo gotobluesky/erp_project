@@ -21,6 +21,7 @@ class Employee extends Model
         'biometric_emp_id',
         'branch_id',
         'department_id',
+        'subdepartment_id',
         'designation_id',
         'company_doj',
         'documents',
@@ -200,11 +201,11 @@ class Employee extends Model
      public static function basic_deduction($employee, $start, $end){
            
         $Vacationday = 12;
-        $Vacationbonus = 0.25;
-        $Aguinaldo = 12;
+        $Vacationbonus = $Vacationday * 0.25;
+        $Aguinaldo = 15 + $Vacationbonus;
         $Daypyear = 365;
         $Totaldays = $Aguinaldo + $Daypyear; 
-        $FDI =$Totaldays/ $Daypyear; //1.0328767
+        $FDI =$Totaldays/ $Daypyear; //
 
         $SDI = floatval($employee-> salary) * $FDI;
         $UMA3 = 325.71;
@@ -239,8 +240,8 @@ class Employee extends Model
                                
         $Isr = floatval($baseValueIsr[0]->cuota) + ((floatval($employee->salary * $result["labor"])-floatval($baseValueIsr[0]->limif))*floatval($baseValueIsr[0]->porcen));
        
-        if (floatval($employee->salary)*$result["labor"]<2271){
-            $subsidio =89.84;
+        if (floatval($employee->salary)*30.4<9084){
+            $subsidio =89.80;
         }else{
             $subsidio =0;
         }
@@ -264,20 +265,34 @@ class Employee extends Model
 
         return $other_payment_json;
     }
-
-    public static function overtime($id)
+    
+    public static function overtimeamount($id, $start, $end)
     {
         //Overtime
-        $over_times      = Overtime::where('employee_id', '=', $id)->get();
-        $total_over_time = 0;
-        foreach ($over_times as $over_time) {
-            $total_work      = $over_time->number_of_days * $over_time->hours;
-            $amount          = $total_work * $over_time->rate;
-            $total_over_time = $amount + $total_over_time;
+       
+        $labor= new AttendanceEmployee();
+        $overtime = $labor->calculateovertime($id, $start, $end);
+        
+        $employee = Employee::find($id);
+        if($employee->designation_id==104 || $employee->designation_id==105){
+            $rate = 120;
+        }elseif($employee->subdepartment_id==11){
+            $rate = 70;
+        }elseif($employee->subdepartment_id==23 && ($employee->designation_id!=104 || $employee->designation_id!=105)){
+            $rate = 100;
+        }elseif($employee->subdepartment_id!=11 && ($employee->designation_id!=104 || $employee->designation_id!=105) && $employee->subdepartment_id!=23){
+            $rate = $employee->saltots/48;
         }
-        $over_time_json = json_encode($over_times);
-
-        return $over_time_json;
+    //     // $over_times      = Overtime::where('employee_id', '=', $id)->get();
+    //     // $total_over_time = 0;
+    //     // foreach ($over_times as $over_time) {
+    //     //     $total_work      = $over_time->number_of_days * $over_time->hours;
+    //     //     $amount          = $total_work * $over_time->rate;
+    //     //     $total_over_time = $amount + $total_over_time;
+    //     // }
+    //     // $over_time_json = json_encode($over_times);
+       $amount = $overtime * $rate;
+        return $amount;
     }
 
     public static function employee_id()

@@ -5,24 +5,24 @@
         <div class="form-group  ">
             <?php echo e(Form::label('salary_type', __('Payslip Type*'), ['class' => 'col-form-label'])); ?>
 
-            <?php echo e(Form::select('salary_type', $payslip_type, null, ['class' => 'form-control', 'required' => 'required'])); ?>
+            <?php echo e(Form::select('salary_type', $payslip_type, null, ['class' => 'form-control', 'step' => '0.001', 'required' => 'required'])); ?>
 
         </div>
         <div class="form-group  ">
             <?php echo e(Form::label('salary', __('Salario diario'), ['class' => 'col-form-label'])); ?>
 
-            <?php echo e(Form::number('salary', null, ['class' => 'form-control ', 'required' => 'required'])); ?>
+            <?php echo e(Form::number('salary', null, ['class' => 'form-control ', 'step' => '0.001', 'required' => 'required'])); ?>
 
         </div> <div class="form-group  ">
             <?php echo e(Form::label('saltots', __('Salario Total'), ['class' => 'col-form-label'])); ?>
 
-            <?php echo e(Form::number('saltots', null, ['class' => 'form-control ', 'required' => 'required'])); ?>
+            <?php echo e(Form::number('saltots', null, ['class' => 'form-control ', 'step' => '0.001', 'required' => 'required'])); ?>
 
         </div>
         <div class="form-group">
             <?php echo e(Form::label('account_type', __('From Account*'), ['class' => 'col-form-label'])); ?>
 
-            <?php echo e(Form::select('account_type', $accounts, null, ['class' => 'form-control', 'required' => 'required'])); ?>
+            <?php echo e(Form::select('account_type', $accounts, null, ['class' => 'form-control', 'step' => '0.001', 'required' => 'required'])); ?>
 
         </div>
     </div>

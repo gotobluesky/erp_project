@@ -44,10 +44,10 @@ class AttendanceEmployee extends Model
             $i += 1;
         }
         
-      // Move $start back by the total number of iterationsasdfasdfasdfasdfasdfasdfsdf
+      // Move $start back by the total number of iterations
         $start->modify('-' . $i . ' days');
-        
-        $attendanceEmployees = AttendanceEmployee::where('employee_id', $employee_id)->where('date', '>=', $start)->where('date', '<', $end)->get();
+         
+        $attendanceEmployees = AttendanceEmployee::where('employee_id', $employee_id)->where('date', '>=', $start)->where('date', '<=', $end)->get();
        
         $Asistidos = 0;
         $result["sunday"]=0;
@@ -71,5 +71,24 @@ class AttendanceEmployee extends Model
         $result["labor"]=$laboradorados;
         $result["Asistidos"]=$Asistidos;
         return $result;
+    }
+     public function calculateovertime($employee_id, $start, $end){
+         
+         $attendanceEmployees = AttendanceEmployee::where('employee_id', $employee_id)->where('date', '>=', $start)->where('date', '<=', $end)->get();
+         
+         $totalovertime=0;
+         foreach ( $attendanceEmployees as $value){
+             
+            list($hours, $minutes, $seconds) = explode(":", $value->overtime);
+
+            
+            $totalSeconds = ($hours * 3600) + ($minutes * 60) + $seconds;
+           
+            if($totalSeconds>0){
+                 $totalovertime+=$totalSeconds;
+            }
+        }
+        
+        return $totalovertime/3600;
     }
 }

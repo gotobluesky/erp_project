@@ -3,18 +3,18 @@
     <div class="row">
         <div class="form-group  ">
             {{ Form::label('salary_type', __('Payslip Type*'), ['class' => 'col-form-label']) }}
-            {{ Form::select('salary_type', $payslip_type, null, ['class' => 'form-control', 'required' => 'required']) }}
+            {{ Form::select('salary_type', $payslip_type, null, ['class' => 'form-control', 'step' => '0.001', 'required' => 'required']) }}
         </div>
         <div class="form-group  ">
             {{ Form::label('salary', __('Salario diario'), ['class' => 'col-form-label']) }}
-            {{ Form::number('salary', null, ['class' => 'form-control ', 'required' => 'required']) }}
+            {{ Form::number('salary', null, ['class' => 'form-control ', 'step' => '0.001', 'required' => 'required']) }}
         </div> <div class="form-group  ">
             {{ Form::label('saltots', __('Salario Total'), ['class' => 'col-form-label']) }}
-            {{ Form::number('saltots', null, ['class' => 'form-control ', 'required' => 'required']) }}
+            {{ Form::number('saltots', null, ['class' => 'form-control ', 'step' => '0.001', 'required' => 'required']) }}
         </div>
         <div class="form-group">
             {{ Form::label('account_type', __('From Account*'), ['class' => 'col-form-label']) }}
-            {{ Form::select('account_type', $accounts, null, ['class' => 'form-control', 'required' => 'required']) }}
+            {{ Form::select('account_type', $accounts, null, ['class' => 'form-control', 'step' => '0.001', 'required' => 'required']) }}
         </div>
     </div>
 </div>

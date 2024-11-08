@@ -534,15 +534,15 @@
                             <div class="col-11">
                                 <h5><?php echo e(__('Overtime')); ?></h5>
                             </div>
-                            <?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Create Overtime')): ?>
-                                <div class="col-1 text-end">
-                                    <a data-url="<?php echo e(route('overtimes.create', $employee->id)); ?>" data-ajax-popup="true"
-                                        data-title="<?php echo e(__('Create Overtime')); ?>" data-bs-toggle="tooltip" title=""
-                                        class="btn btn-sm btn-primary" data-bs-original-title="<?php echo e(__('Create')); ?>">
-                                        <i class="ti ti-plus"></i>
-                                    </a>
-                                </div>
-                            <?php endif; ?>
+                            <!--<?php if (app(\Illuminate\Contracts\Auth\Access\Gate::class)->check('Create Overtime')): ?>-->
+                            <!--    <div class="col-1 text-end">-->
+                            <!--        <a data-url="<?php echo e(route('overtimes.create', $employee->id)); ?>" data-ajax-popup="true"-->
+                            <!--            data-title="<?php echo e(__('Create Overtime')); ?>" data-bs-toggle="tooltip" title=""-->
+                            <!--            class="btn btn-sm btn-primary" data-bs-original-title="<?php echo e(__('Create')); ?>">-->
+                            <!--            <i class="ti ti-plus"></i>-->
+                            <!--        </a>-->
+                            <!--    </div>-->
+                            <!--<?php endif; ?>-->
                         </div>
                     </div>
                     <div class=" card-body table-border-style" style=" overflow:auto">

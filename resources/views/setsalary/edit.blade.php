@@ -469,7 +469,7 @@
                             </div>
                         </div>
                     </div>
-                    <div id="overtime" class="tab-pane">
+                    <div id="overtime1" class="tab-pane">
                         <div class="card">
                             <div class="card-body">
                                 {{Form::open(array('url'=>'overtime','method'=>'post'))}}
