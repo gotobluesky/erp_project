@@ -91,8 +91,6 @@ class EmployeeController extends Controller
                 'password' => 'required',
                 'branch_id' => 'required',
                 'department_id' => 'required',
-                'subdepartment_id' => 'required',
-                'designation_id' => 'required',
                 'document.*' => 'required',
             ];
             $rules['biometric_emp_id'] = [
@@ -171,8 +169,8 @@ class EmployeeController extends Controller
                     'biometric_emp_id' => !empty($request['biometric_emp_id']) ? $request['biometric_emp_id'] : '',
                     'branch_id' => $request['branch_id'],
                     'department_id' => $request['department_id'],
-                    'subdepartment_id' => $request['subdepartment_id'],
-                    'designation_id' => $request['designation_id'],
+                    'subdepartment_id' => !empty($request['subdepartment_id']) ? $request['subdepartment_id']: '',
+                    'designation_id' => !empty($request['designation_id']) ? $request['designation_id']: '',
                     'company_doj' => $request['company_doj'],
                     'documents' => $document_implode,
                     'account_holder_name' => $request['account_holder_name'],

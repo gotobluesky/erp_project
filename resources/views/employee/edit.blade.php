@@ -35,6 +35,7 @@
                                     {!! Form::label('name', __('Name'), ['class' => 'form-label']) !!}<span class="text-danger pl-1">*</span>
                                     {!! Form::text('name', null, ['class' => 'form-control', 'required' => 'required']) !!}
                                 </div>
+                                
                                 <div class="form-group col-md-6">
                                     {!! Form::label('phone', __('Phone'), ['class' => 'form-label']) !!}<span class="text-danger pl-1">*</span>
                                     {!! Form::text('phone', null, ['class' => 'form-control']) !!}

@@ -41,6 +41,18 @@
                                     ]) !!}
                                 </div>
                                 <div class="form-group col-md-6">
+                                    {!! Form::label('rfc', __('RFC'), ['class' => 'form-label']) !!}
+                                    {!! Form::text('rfc', null, ['class' => 'form-control','placeholder' => 'Enter employee RFC',]) !!}
+                                </div>
+                                <div class="form-group col-md-6">
+                                    {!! Form::label('social', __('#Seguro Social'), ['class' => 'form-label']) !!}
+                                    {!! Form::text('social', null, ['class' => 'form-control',  'placeholder' => 'Enter employee #Seguro Social',]) !!}
+                                </div>
+                                <div class="form-group col-md-6">
+                                    {!! Form::label('curp', __('CURP'), ['class' => 'form-label']) !!}
+                                    {!! Form::text('curp', null, ['class' => 'form-control','placeholder' => 'Enter employee CURP',]) !!}
+                                </div>
+                                <div class="form-group col-md-6">
                                     {!! Form::label('phone', __('Phone'), ['class' => 'form-label']) !!}<span class="text-danger pl-1">*</span>
                                     {!! Form::text('phone', old('phone'), ['class' => 'form-control', 'required' => 'required', 'placeholder' => 'Enter employee Phone']) !!}
                                 </div>

@@ -56,77 +56,86 @@
                         <div class="col-md-12">
                             <div class="table-responsive">
                                 <table class="table  table-md">
-                                   <table class="table table-striped table-hover table-md">
-                                    <tbody>
-                                        <tr class="font-weight-bold">
-                                             <tr class="font-weight-bold">
-                                            <th>{{ __('Earning') }}</th>
-                                            <th>{{ __('Title') }}</th>
-                                            <th>{{ __('type') }}</th>
-                                            <th>{{ __('Amount') }}</th>
-                                        </tr>
-
-                                        
-                                        </tr>
-
-                                    
+                                    <table class="table table-striped table-hover table-md">
+                                        <tbody>
+                                            <tr class="font-weight-bold">
+                                                <tr class="font-weight-bold">
+                                                    <th>{{ __('Earning') }}</th>
+                                                    <th>{{ __('Title') }}</th>
+                                                    <th>{{ __('type') }}</th>
+                                                    <th>{{ __('Amount') }}</th>
+                                                </tr>
+                                            </tr>
+                                               @if($employee->salary_type==3)
                                                 <tr>
                                                     <td>NÓMINA</td>
                                                     <td>-</td>
                                                    <td>-</td>
                                                    <td>     {{ \Auth::user()->priceFormat($payslip->net_payble) }}</td>
                                                 </tr>
+                                               @endif
                                                  <tr>
                                                      <td>COMPLEMENTO</td>
                                                     <td>-</td>
                                                    <td>-</td>
-                                                   <td>     {{ \Auth::user()->priceFormat((($employee->saltots-$payslip->net_payble)/7)*$payslip->labor_days) }}</td>
+                                                   @if($employee->salary_type==3)
+                                                   <td>     {{ \Auth::user()->priceFormat((($employee->saltots-$employee->salary*7)/6)*$payslip->labor_days + $payslip->sunday) }}</td>
+                                                   @endif
+                                                   @if($employee->salary_type==6)
+                                                    <td>     {{ \Auth::user()->priceFormat($employee->saltots/6*$payslip->asistidos) }}</td>
+                                                    @endif
                                                 </tr>
                                                 <tr>
-                                                     <td>Prima Dominical</td>
+                                                    <td>Prima Dominical</td>
                                                     <td>-</td>
-                                                   <td>-</td>
-                                                   <td>     {{ \Auth::user()->priceFormat($payslip->sunday) }}</td>
+                                                    <td>-</td>
+                                                    <td>     {{ \Auth::user()->priceFormat($payslip->sunday) }}</td>
                                                 </tr>
                                                <?php $other_payment=json_decode($payslip->other_payment);
                                                 //var_dump($json_decode($payslip->saturation_deduction));die();?>
                                                 @foreach ($other_payment as $item)
-                                                <tr>
+                                                    <tr>
                                                         <td>{{$item->title}}</td>
-                                                    <td>-</td>
-                                               <td>{{$item->type}}</td>
+                                                        <td>-</td>
+                                                        <td>{{$item->type}}</td>
                                                    
-                                                  <td>     {{ \Auth::user()->priceFormat( $item->amount) }}</td>
-                                                </tr>
+                                                        <td>{{ \Auth::user()->priceFormat($item->amount) }}</td>
+                                                    </tr>
                                                 @endforeach
-                                             
-                                                 <tr>
-                                                     <td>Horas Extra</td>
+                                                <?php $overtime=json_decode($payslip->overtime);?>
+                                                <!-- <tr>-->
+                                                <!--    <td>Overtime</td>-->
+                                                <!--    <td>-</td>-->
+                                                <!--    <td>-</td>-->
+                                                <!--    <td> {{ $overtime->overtime }}</td>-->
+                                                <!--</tr>-->
+                                                <tr>
+                                                    <td>Horas Extra</td>
                                                     <td>-</td>
                                                    <td>-</td>
-                                                   <td>     {{ \Auth::user()->priceFormat($payslip->overtime) }}</td>
+                                                   <td> {{ \Auth::user()->priceFormat($overtime->rate * $overtime->overtime) }}</td>
                                                 </tr>
-                                            
                                               
-                                    </tbody>
-                                </table>
+                                        </tbody>
+                                    </table>
                                 </table>
                             </div>
+                           <?php 
+                               $basic_deduction=json_decode($payslip->basic_deduction);
+                               $saturationdeduction=json_decode($payslip->saturation_deduction);
+                            ?>
+                             @if($employee->salary_type==3)
                             <div class="table-responsive">
                                 <table class="table table-striped table-hover table-md">
-                              <tbody>
+                                    <tbody>
                                         <tr class="font-weight-bold">
-                                             <tr class="font-weight-bold">
-                                            <th>{{ __('Deduction') }}</th>
-                                            <th>{{ __('Title') }}</th>
-                                            <th>{{ __('type') }}</th>
-                                            <th>{{ __('Amount') }}</th>
-                                        </tr>
-
-                                        
-                                        </tr>
-
-                                      <?php $basic_deduction=json_decode($payslip->basic_deduction);?>
+                                            <tr class="font-weight-bold">
+                                                <th>{{ __('Deduction') }}</th>
+                                                <th>{{ __('Title') }}</th>
+                                                <th>{{ __('type') }}</th>
+                                                <th>{{ __('Amount') }}</th>
+                                            </tr>
+                                         </tr>
                                                 <tr>
                                                     <td>IMSS</td>
                                                     <td>-</td>
@@ -145,8 +154,7 @@
                                                    <td>-</td>
                                                    <td>{{number_format($basic_deduction->subsidio, 2) }}</td>
                                                 </tr>
-                                                 <?php $saturationdeduction=json_decode($payslip->saturation_deduction);
-                                                //var_dump($json_decode($payslip->saturation_deduction));die();?>
+                                               
                                                 @foreach ($saturationdeduction as $item)
                                                 <tr>
                                                      <td>{{$item->title}}</td>
@@ -161,7 +169,7 @@
                                     </tbody>
                                 </table>
                             </div>
-
+                            @endif
                             <div class="row mt-4">
                                 <div class="col-lg-8">
 

@@ -146,7 +146,7 @@ class PaySlipController extends Controller
                     $payslipEmployee->basic_deduction      = Employee::basic_deduction($employee, $start, $end);
                   
                     $payslipEmployee->labor_days           = $result["labor"];
-                  
+                     $payslipEmployee->asistidos           = $result["Asistidos"];
                     if($result['sunday']==1){
                         $payslipEmployee->sunday           = $employee->saltots /6*.25;
                     }else{
@@ -154,6 +154,7 @@ class PaySlipController extends Controller
                     }
                     $payslipEmployee->saturation_deduction = Employee::saturation_deduction($employee->id);
                     $payslipEmployee->other_payment        = Employee::other_payment($employee->id);
+                    
                     $payslipEmployee->overtime             = Employee::overtimeamount($employee->id, $start, $end);
                     $payslipEmployee->created_by           = \Auth::user()->creatorId();
                     $payslipEmployee->start=$start;
@@ -262,6 +263,7 @@ class PaySlipController extends Controller
                     'employees.id',
                     'employees.employee_id',
                     'employees.name',
+                    'employees.salary_type',
                     'payslip_types.name as payroll_type',
                     'pay_slips.basic_salary',
                     'pay_slips.net_payble',
@@ -271,6 +273,7 @@ class PaySlipController extends Controller
                     'pay_slips.status',
                     'pay_slips.sunday',
                      'pay_slips.labor_days',
+                     'pay_slips.asistidos',
                     'employees.user_id',
                     'pay_slips.basic_deduction'
                 ]
@@ -292,8 +295,15 @@ class PaySlipController extends Controller
                         $tmp[] = $employee->payroll_type;
                         $tmp[] = $employee->pay_slip_id;
                         $tmp[] = !empty($get_employee->salary) ? \Auth::user()->priceFormat($get_employee->salary) : '-';
-                        $tmp[] = !empty($employee->net_payble) ? \Auth::user()->priceFormat($employee->net_payble) : '-';
-                        $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat(($get_employee->saltots-$employee->salary*7)/7* $employee->labor_days + $employee->sunday) : '-';
+                   
+                        
+                        if($employee->salary_type==3){
+                             $tmp[] = !empty($employee->net_payble) ? \Auth::user()->priceFormat($employee->net_payble) : '-';
+                            $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat(($get_employee->saltots-$get_employee->salary*7)/6 * $employee->labor_days + $employee->sunday) : '-';
+                        }else if($employee->salary_type==6){
+                             $tmp[] = \Auth::user()->priceFormat(0);
+                            $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots/6 * $employee->asistidos) : '-';
+                        }
                         $tmp[] = $start;
                         $tmp[] = $end;
                         if ($employee->status == 1) {
@@ -316,8 +326,16 @@ class PaySlipController extends Controller
                     $tmp[] = $employee->name;
                     $tmp[] = $employee->payroll_type;
                     $tmp[] = !empty($get_employee->salary) ? \Auth::user()->priceFormat($get_employee->salary) : '-';
-                    $tmp[] = !empty($employee->net_payble) ? \Auth::user()->priceFormat($employee->net_payble) : '-';
-                    $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat(($get_employee->saltots-$get_employee->salary*7)/7* $employee->labor_days  + $employee->sunday) : '-';
+                   
+                   
+                    if($employee->salary_type==3){
+                        $tmp[] = !empty($employee->net_payble) ? \Auth::user()->priceFormat($employee->net_payble) : '-';
+                            $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat(($get_employee->saltots-$get_employee->salary*7)/6 * $employee->labor_days + $employee->sunday) : '-';
+                        }else if($employee->salary_type==6){
+                            
+                            $tmp[] = \Auth::user()->priceFormat(0);
+                            $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots/6*$employee->asistidos) : '-';
+                        }
                     $tmp[] = $start;
                     $tmp[] = $end;
                     if ($employee->status == 1) {
@@ -415,7 +433,7 @@ class PaySlipController extends Controller
 
     public function pdf($id, $payslip_id)
     {
-
+        
         $payslip  = PaySlip::where('employee_id', $id)->where('id', $payslip_id)->where('created_by', \Auth::user()->creatorId())->first();
         
         $employee = Employee::find($payslip->employee_id);

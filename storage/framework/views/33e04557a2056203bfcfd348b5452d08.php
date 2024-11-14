@@ -36,6 +36,7 @@
                                     <?php echo Form::text('name', null, ['class' => 'form-control', 'required' => 'required']); ?>
 
                                 </div>
+                                
                                 <div class="form-group col-md-6">
                                     <?php echo Form::label('phone', __('Phone'), ['class' => 'form-label']); ?><span class="text-danger pl-1">*</span>
                                     <?php echo Form::text('phone', null, ['class' => 'form-control']); ?>

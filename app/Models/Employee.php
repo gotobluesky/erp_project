@@ -291,8 +291,11 @@ class Employee extends Model
     //     //     $total_over_time = $amount + $total_over_time;
     //     // }
     //     // $over_time_json = json_encode($over_times);
+      
        $amount = $overtime * $rate;
-        return $amount;
+       $result['rate']= $rate;
+        $result['overtime']= $amount;
+        return json_encode($result);
     }
 
     public static function employee_id()
