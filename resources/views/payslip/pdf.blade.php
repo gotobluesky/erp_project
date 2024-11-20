@@ -80,9 +80,13 @@
                                                    <td>-</td>
                                                    @if($employee->salary_type==3)
                                                    <td>     {{ \Auth::user()->priceFormat((($employee->saltots-$employee->salary*7)/6)*$payslip->labor_days + $payslip->sunday) }}</td>
-                                                   @endif
-                                                   @if($employee->salary_type==6)
-                                                    <td>     {{ \Auth::user()->priceFormat($employee->saltots/6*$payslip->asistidos) }}</td>
+                                                   @else($employee->salary_type==5)
+                                                        {{$checkweekday}}
+                                                        @if($checkweekday==1)
+                                                            <td>     {{ \Auth::user()->priceFormat((($employee->saltots-$employee->salary*7)/36)) }}</td>
+                                                        @else($checkweekday==2)
+                                                            <td>     {{ \Auth::user()->priceFormat($employee->saltots/6*$payslip->asistidos) }}</td>
+                                                         @endif
                                                     @endif
                                                 </tr>
                                                 <tr>
