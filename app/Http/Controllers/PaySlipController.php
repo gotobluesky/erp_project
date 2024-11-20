@@ -152,6 +152,7 @@ class PaySlipController extends Controller
                     }else{
                         $payslipEmployee->sunday           = 0;
                     }
+                    $payslipEmployee->hrsworked           = $result["hrsworked"];
                     $payslipEmployee->saturation_deduction = Employee::saturation_deduction($employee->id);
                     $payslipEmployee->other_payment        = Employee::other_payment($employee->id);
                     
@@ -274,6 +275,7 @@ class PaySlipController extends Controller
                     'pay_slips.sunday',
                      'pay_slips.labor_days',
                      'pay_slips.asistidos',
+                     'pay_slips.hrsworked',
                     'employees.user_id',
                     'pay_slips.basic_deduction'
                 ]
@@ -284,7 +286,7 @@ class PaySlipController extends Controller
                     $join->leftjoin('payslip_types', 'payslip_types.id', '=', 'employees.salary_type');
                 }
             )->where('employees.created_by', \Auth::user()->creatorId())->where('start','>=', $start)->where('end', '<=', $end)->get();
-
+            
             foreach ($paylip_employee as $employee) {
                 $get_employee = Employee::where('id', $employee->id)->where('created_by', \Auth::user()->creatorId())->first();
                 if (Auth::user()->type == 'employee') {
@@ -300,9 +302,50 @@ class PaySlipController extends Controller
                         if($employee->salary_type==3){
                              $tmp[] = !empty($employee->net_payble) ? \Auth::user()->priceFormat($employee->net_payble) : '-';
                             $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat(($get_employee->saltots-$get_employee->salary*7)/6 * $employee->labor_days + $employee->sunday) : '-';
+                        } else if ($employee->salary_type==5){
+                            $weekdaycheck1=$this->checkWeekdaysBetween($employee->start, $employee->end,['Monday', 'Wednesday', 'Saturday']);
+                            $weekdaycheck2=$this->checkWeekdaysBetween($employee->start, $employee->end,['Tuesday', 'Thursday', 'Friday', 'Sunday']);
+                            
+                            if(!empty($weekdaycheck1)){
+                                if($employee->asistidos==count($weekdaycheck1)){
+                                    $tmp[] = \Auth::user()->priceFormat($get_employee->salary*7);
+                                    $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots-$get_employee->salary*7) : '-';
+                                }else{
+                                    $tmp[] = \Auth::user()->priceFormat(($get_employee->salary*7*$employee->hrsworked)/36);
+                                    $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat((($get_employee->saltots-$get_employee->salary*7)/36)*$employee->hrsworked) : '-';
+                                }
+                            }else if (!empty($weekdaycheck2)){
+                                if($employee->asistidos==count($weekdaycheck2)){
+                                     $tmp[] = \Auth::user()->priceFormat($get_employee->salary*7);
+                                     $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots-$get_employee->salary*7) : '-';
+                                }else{
+                                    $tmp[] = \Auth::user()->priceFormat(($get_employee->salary*7*$employee->hrsworked)/48);
+                                    $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat((($get_employee->saltots-$get_employee->salary*7)/48)*$employee->hrsworked) : '-';
+                                }
+                            }
                         }else if($employee->salary_type==6){
-                             $tmp[] = \Auth::user()->priceFormat(0);
+                            $tmp[] = \Auth::user()->priceFormat(0);
                             $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots/6 * $employee->asistidos) : '-';
+                        } else if ($employee->salary_type==7){
+                            $weekdaycheck1=$this->checkWeekdaysBetween($employee->start, $employee->end,['Monday', 'Wednesday', 'Saturday']);
+                            $weekdaycheck2=$this->checkWeekdaysBetween($employee->start, $employee->end,['Tuesday', 'Thursday', 'Friday', 'Sunday']);
+                            if(!empty($weekdaycheck1)){
+                                    if($employee->asistidos==count($weekdaycheck1)){
+                                        $tmp[] = \Auth::user()->priceFormat(0);
+                                        $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots-900) : '-';
+                                    }else{
+                                        $tmp[] = \Auth::user()->priceFormat(0);
+                                        $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat(($get_employee->saltots/36)*$employee->hrsworked-900) : '-';
+                                    }
+                            }else if (!empty($weekdaycheck2)){
+                                if($employee->asistidos==count($weekdaycheck2)){
+                                    $tmp[] = \Auth::user()->priceFormat(0);
+                                    $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots-900) : '-';
+                                }else{
+                                    $tmp[] = \Auth::user()->priceFormat(0);
+                                    $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat(($get_employee->saltots/48)*$employee->hrsworked-900) : '-';
+                                }
+                            }
                         }
                         $tmp[] = $start;
                         $tmp[] = $end;
@@ -314,6 +357,7 @@ class PaySlipController extends Controller
                         $tmp[]  = !empty($employee->pay_slip_id) ? $employee->pay_slip_id : 0;
                         $tmp[]  = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots) : '-';
                         $tmp[]  = $employee->basic_deduction;
+                        
                         $tmp['url']  = route('employee.show', Crypt::encrypt($employee->id));
                        
                         $data[] = $tmp;
@@ -331,11 +375,51 @@ class PaySlipController extends Controller
                     if($employee->salary_type==3){
                         $tmp[] = !empty($employee->net_payble) ? \Auth::user()->priceFormat($employee->net_payble) : '-';
                             $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat(($get_employee->saltots-$get_employee->salary*7)/6 * $employee->labor_days + $employee->sunday) : '-';
-                        }else if($employee->salary_type==6){
-                            
-                            $tmp[] = \Auth::user()->priceFormat(0);
-                            $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots/6*$employee->asistidos) : '-';
+                    }else if($employee->salary_type==6){
+                        
+                        $tmp[] = \Auth::user()->priceFormat(0);
+                        $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots/6*$employee->asistidos) : '-';
+                    } else if ($employee->salary_type==5){
+                        $weekdaycheck1=$this->checkWeekdaysBetween($employee->start, $employee->end,['Monday', 'Wednesday', 'Saturday']);
+                        $weekdaycheck2=$this->checkWeekdaysBetween($employee->start, $employee->end,['Tuesday', 'Thursday', 'Friday', 'Sunday']);
+                        if(!empty($weekdaycheck1)){
+                                if($employee->asistidos==count($weekdaycheck1)){
+                                    $tmp[] = \Auth::user()->priceFormat($get_employee->salary*7);
+                                    $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots-$get_employee->salary*7) : '-';
+                                }else{
+                                    $tmp[] = \Auth::user()->priceFormat(($get_employee->salary*7*$employee->hrsworked)/36);
+                                    $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat((($get_employee->saltots-$get_employee->salary*7)/36)*$employee->hrsworked) : '-';
+                                }
+                            }else if (!empty($weekdaycheck2)){
+                                if($employee->asistidos==count($weekdaycheck2)){
+                                     $tmp[] = \Auth::user()->priceFormat($get_employee->salary*7);
+                                     $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots-$get_employee->salary*7) : '-';
+                                }else{
+                                    $tmp[] = \Auth::user()->priceFormat(($get_employee->salary*7*$employee->hrsworked)/48);
+                                    $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat((($get_employee->saltots-$get_employee->salary*7)/48)*$employee->hrsworked) : '-';
+                                }
                         }
+                    } else if ($employee->salary_type==7){
+                        $weekdaycheck1=$this->checkWeekdaysBetween($employee->start, $employee->end,['Monday', 'Wednesday', 'Saturday']);
+                        $weekdaycheck2=$this->checkWeekdaysBetween($employee->start, $employee->end,['Tuesday', 'Thursday', 'Friday', 'Sunday']);
+                        if(!empty($weekdaycheck1)){
+                                if($employee->asistidos==count($weekdaycheck1)){
+                                    $tmp[] = \Auth::user()->priceFormat(0);
+                                    $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots) : '-';
+                                }else{
+                                    $tmp[] = \Auth::user()->priceFormat(0);
+                                    $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat(($get_employee->saltots/36)*$employee->hrsworked) : '-';
+                                }
+                        }else if (!empty($weekdaycheck2)){
+                            if($employee->asistidos==count($weekdaycheck2)){
+                                $tmp[] = \Auth::user()->priceFormat(0);
+                                $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots) : '-';
+                            }else{
+                                $tmp[] = \Auth::user()->priceFormat(0);
+                                $tmp[] = !empty($get_employee->saltots) ? \Auth::user()->priceFormat(($get_employee->saltots/48)*$employee->hrsworked) : '-';
+                            }
+                        }
+                    }
                     $tmp[] = $start;
                     $tmp[] = $end;
                     if ($employee->status == 1) {
@@ -347,12 +431,31 @@ class PaySlipController extends Controller
                     $tmp[]  = !empty($get_employee->saltots) ? \Auth::user()->priceFormat($get_employee->saltots) : '-';
                     $tmp[]  = $employee->basic_deduction;
                     $tmp['url']  = route('employee.show', Crypt::encrypt($employee->id));
-                     
+                   
                     $data[] = $tmp;
                 }
             }
             return $data;
         }
+    }
+    public function checkWeekdaysBetween($startDate, $endDate, $weekdays = []) {
+        // Create DateTime objects for the start and end dates
+        $start = new DateTime($startDate);
+        $end = new DateTime($endDate);
+        $end->modify('+1 day'); // Include the end date in the loop
+    
+        // Array to hold found weekdays
+        $foundWeekdays = [];
+    
+        // Iterate through the date range
+        for ($date = $start; $date < $end; $date->modify('+1 day')) {
+            // Check if the current day is in the specified weekdays
+            if (in_array($date->format('l'), $weekdays)) {
+                $foundWeekdays[] = $date->format('Y-m-d') . ' (' . $date->format('l') . ')';
+            }
+        }
+    
+        return $foundWeekdays;
     }
     public function paystatus($id){
         
@@ -361,9 +464,6 @@ class PaySlipController extends Controller
         $payslip->update( $data);
 
         return true;
-        // $payslipEmployee                       = new PaySlip();
-        // $payslipEmployee->updatedata($id);
-        // return 1;
     }
     public function paysalary($id, $date)
     {
@@ -438,7 +538,18 @@ class PaySlipController extends Controller
         
         $employee = Employee::find($payslip->employee_id);
         
-        return view('payslip.pdf', compact('payslip', 'employee'));
+        $weekdaycheck1=$this->checkWeekdaysBetween($employee->start, $employee->end,['Monday', 'Wednesday', 'Saturday']);
+        $weekdaycheck2=$this->checkWeekdaysBetween($employee->start, $employee->end,['Tuesday', 'Thursday', 'Friday', 'Sunday']);
+        $checkweekday=0;
+        if($employee->salary_type==5){
+              if(!empty($weekdaycheck1)){
+                  $checkweekday=1;
+             }else if(!empty($weekdaycheck2)){
+                  $checkweekday=2;
+              }
+        }
+       
+        return view('payslip.pdf', compact('payslip', 'employee', 'checkweekday'));
     }
 
     public function send($id, $month)
